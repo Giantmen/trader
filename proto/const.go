@@ -31,10 +31,10 @@ const (
 )
 
 const (
-	BUY         = "BUY"
-	SELL        = "SELL"
-	BUY_MARKET  = "BUY_MARKET"
-	SELL_MARKET = "SELL_MARKET"
+	BUY         = "buy"
+	SELL        = "sell"
+	BUY_MARKET  = "buy_market"
+	SELL_MARKET = "sell_market"
 )
 
 const (

@@ -3,12 +3,13 @@ package main
 import (
 	"flag"
 	stdlog "log"
-	"net/http"
 
+	"github.com/Giantmen/trader/api"
 	"github.com/Giantmen/trader/config"
 	"github.com/Giantmen/trader/log"
 
 	"github.com/BurntSushi/toml"
+	"github.com/solomoner/gozilla"
 )
 
 var (
@@ -35,5 +36,9 @@ func main() {
 		stdlog.Fatal("DecodeConfigFile error: ", err)
 	}
 	initLog(&cfg)
-	stdlog.Fatal(http.ListenAndServe(cfg.Listen, nil))
+
+	api.Register(&cfg)
+	log.Info("register over")
+	gozilla.DefaultLogOpt.Format += " {{.Body}}"
+	stdlog.Fatal(gozilla.ListenAndServe(cfg.Listen))
 }
