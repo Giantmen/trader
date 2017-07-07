@@ -1,10 +1,10 @@
 package proto
 
 type DepthQuery struct {
-	Size         int    `json:"size"`
-	Depth        int    `json:"depth"`
-	Bourse       string `validate:"required" json:"bourse"`
-	CurrencyPair string `validate:"required" json:"currencypair"`
+	Size     int    `json:"size"`
+	Depth    int    `json:"depth"`
+	Bourse   string `validate:"required" json:"bourse"`
+	Currency string `validate:"required" json:"currency"`
 }
 
 type Price struct {
@@ -25,19 +25,18 @@ type SubAccount struct {
 }
 
 //cancel order
-type CancelQuery struct {
-	Bourse       string `validate:"required" json:"bourse"`
-	OrderID      string `validate:"required" json:"orderid"`
-	CurrencyPair string `validate:"required" json:"currencypair"`
+type OneOrderQuery struct {
+	Bourse   string `validate:"required" json:"bourse"`
+	OrderID  string `validate:"required" json:"orderid"`
+	Currency string `validate:"required" json:"currency"`
 }
 
 //order
 type OrderQuery struct {
-	Bourse       string `validate:"required" json:"bourse"`
-	Side         string `validate:"required" json:"side"`
-	Amount       string `validate:"required" json:"amount"`
-	Price        string `validate:"required" json:"price"`
-	CurrencyPair string `validate:"required" json:"currencypair"`
+	Bourse   string `validate:"required" json:"bourse"`
+	Amount   string `validate:"required" json:"amount"`
+	Price    string `validate:"required" json:"price"`
+	Currency string `validate:"required" json:"currency"`
 }
 
 type Order struct {

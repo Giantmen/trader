@@ -20,6 +20,7 @@ const (
 
 	BTS_CNY = "bts_cny"
 	BTS_BTC = "bts_btc"
+	EOS_CNY = "eos_cny"
 )
 const (
 	CNY = "cny"
@@ -28,11 +29,14 @@ const (
 	ETH = "eth"
 	ETC = "etc"
 	BTS = "bts"
+	EOS = "eos"
 )
 
 const (
 	BUY         = "buy"
 	SELL        = "sell"
+	BUY_N       = 1
+	SELL_N      = 0
 	BUY_MARKET  = "buy_market"
 	SELL_MARKET = "sell_market"
 )
@@ -45,3 +49,19 @@ const (
 	ORDER_REJECT      = "REJECT"
 	ORDER_CANCEL_ING  = "CANCEL_ING"
 )
+
+func ConvertCurrencyPair(currency string) string {
+	switch currency {
+	case BTC:
+		return BTC_CNY
+	case LTC:
+		return LTC_CNY
+	case ETH:
+		return ETH_CNY
+	case ETC:
+		return ETC_CNY
+	case EOS:
+		return EOS_CNY
+	}
+	return ""
+}

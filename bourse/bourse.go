@@ -3,6 +3,7 @@ package bourse
 import (
 	"strings"
 
+	"github.com/Giantmen/trader/bourse/chbtc"
 	"github.com/Giantmen/trader/bourse/yunbi"
 	"github.com/Giantmen/trader/config"
 	"github.com/Giantmen/trader/proto"
@@ -31,11 +32,11 @@ func NewService(cfg *config.Config) (*Service, error) {
 		bourse[strings.ToUpper(proto.Yunbi)] = yunbi
 	}
 
-	// if chbtc, err := chbtc.New(cfg.Chbtc); err != nil {
-	// 	return nil, err
-	// } else {
-	// 	bourse[proto.Chbtc] = chbtc
-	// }
+	if chbtc, err := chbtc.NewChbtc(&cfg.Chbtc); err != nil {
+		return nil, err
+	} else {
+		bourse[strings.ToUpper(proto.Chbtc)] = chbtc
+	}
 	return &Service{
 		Bourses: bourse,
 	}, nil

@@ -43,7 +43,7 @@ func (q *Query) GetPriceOfDepth(ctx *gozilla.Context, r *proto.DepthQuery) (*pro
 		return nil, fmt.Errorf("get %s err", r.Bourse)
 	}
 
-	return bou.GetPriceOfDepth(r.Size, r.Depth, strings.ToLower(r.CurrencyPair))
+	return bou.GetPriceOfDepth(r.Size, r.Depth, proto.ConvertCurrencyPair(r.Currency))
 }
 
 func (q *Query) GetAccount(ctx *gozilla.Context, r *proto.AmountQuery) (*proto.AmountReply, error) {
@@ -58,11 +58,11 @@ func (q *Query) GetAccount(ctx *gozilla.Context, r *proto.AmountQuery) (*proto.A
 		return nil, err
 	}
 	var Accounts = make(map[string]proto.SubAccount)
-	for _, subaccount := range r.Accounts {
-		if sub, ok := account.SubAccounts[subaccount]; ok {
-			Accounts[subaccount] = sub
+	for _, currency := range r.Accounts {
+		if sub, ok := account.SubAccounts[currency]; ok {
+			Accounts[currency] = sub
 		} else {
-			log.Error("can not find", subaccount)
+			log.Error("can not find", currency)
 		}
 	}
 	return &proto.AmountReply{
@@ -78,7 +78,7 @@ func (q *Query) Sell(ctx *gozilla.Context, r *proto.OrderQuery) (*proto.Order, e
 		log.Errorf("get %s err", r.Bourse)
 		return nil, fmt.Errorf("get %s err", r.Bourse)
 	}
-	order, err := bou.Sell(r.Amount, r.Price, strings.ToLower(r.CurrencyPair))
+	order, err := bou.Sell(r.Amount, r.Price, proto.ConvertCurrencyPair(r.Currency))
 	if err != nil {
 		log.Error("sell err", err)
 	}
@@ -91,18 +91,27 @@ func (q *Query) Buy(ctx *gozilla.Context, r *proto.OrderQuery) (*proto.Order, er
 		log.Errorf("get %s err", r.Bourse)
 		return nil, fmt.Errorf("get %s err", r.Bourse)
 	}
-	order, err := bou.Buy(r.Amount, r.Price, strings.ToLower(r.CurrencyPair))
+	order, err := bou.Buy(r.Amount, r.Price, proto.ConvertCurrencyPair(r.Currency))
 	if err != nil {
 		log.Error("sell err", err)
 	}
 	return bou.GetOneOrder(order.OrderID, order.Currency)
 }
 
-func (q *Query) CancelOrder(ctx *gozilla.Context, r *proto.CancelQuery) (bool, error) {
+func (q *Query) CancelOrder(ctx *gozilla.Context, r *proto.OneOrderQuery) (bool, error) {
 	bou, ok := q.Bourses[strings.ToUpper(r.Bourse)]
 	if !ok {
 		log.Errorf("get %s err", r.Bourse)
 		return false, fmt.Errorf("get %s err", r.Bourse)
 	}
-	return bou.CancelOrder(r.OrderID, r.CurrencyPair)
+	return bou.CancelOrder(r.OrderID, proto.ConvertCurrencyPair(r.Currency))
+}
+
+func (q *Query) GetOneOrder(ctx *gozilla.Context, r *proto.OneOrderQuery) (*proto.Order, error) {
+	bou, ok := q.Bourses[strings.ToUpper(r.Bourse)]
+	if !ok {
+		log.Errorf("get %s err", r.Bourse)
+		return nil, fmt.Errorf("get %s err", r.Bourse)
+	}
+	return bou.GetOneOrder(r.OrderID, proto.ConvertCurrencyPair(r.Currency))
 }
