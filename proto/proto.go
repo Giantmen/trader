@@ -51,13 +51,13 @@ type Order struct {
 	Side         string  `validate:"required" json:"side"`
 }
 
-//amount
-type AmountQuery struct {
+//account
+type AccountQuery struct {
 	Bourse   string   `validate:"required" json:"bourse"`
 	Accounts []string `validate:"required" json:"accounts"`
 }
 
-type AmountReply struct {
+type AccountReply struct {
 	Bourse   string                `validate:"required" json:"bourse"`
 	Asset    float64               `validate:"required" json:"asset"`
 	Accounts map[string]SubAccount `json:"accounts"`

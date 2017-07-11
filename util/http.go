@@ -24,27 +24,30 @@ func Request(method string, url string, bodyType string, body io.Reader, header 
 			return nil, err
 		}
 	case "POST":
-		resp, err = ctxhttp.Post(ctx, nil, url, bodyType, body)
-		if err != nil {
-			return nil, err
+		if header != nil { //用于设置head
+			client := &http.Client{}
+			req, err := http.NewRequest("POST", url, nil)
+			if err != nil {
+				return nil, err
+			}
+			req.Header = header
+			resp, err = client.Do(req)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			resp, err = ctxhttp.Post(ctx, nil, url, bodyType, body)
+			if err != nil {
+				return nil, err
+			}
 		}
+
 	case "DELETE":
 		client := &http.Client{}
 		req, err := http.NewRequest("DELETE", url, nil)
 		if err != nil {
 			return nil, err
 		}
-		resp, err = client.Do(req)
-		if err != nil {
-			return nil, err
-		}
-	case "HEAD": //用于设置head
-		client := &http.Client{}
-		req, err := http.NewRequest("POST", url, nil)
-		if err != nil {
-			return nil, err
-		}
-		req.Header = header
 		resp, err = client.Do(req)
 		if err != nil {
 			return nil, err

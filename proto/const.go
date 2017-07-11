@@ -49,19 +49,3 @@ const (
 	ORDER_REJECT      = "REJECT"
 	ORDER_CANCEL_ING  = "CANCEL_ING"
 )
-
-func ConvertCurrencyPair(currency string) string {
-	switch currency {
-	case BTC:
-		return BTC_CNY
-	case LTC:
-		return LTC_CNY
-	case ETH:
-		return ETH_CNY
-	case ETC:
-		return ETC_CNY
-	case EOS:
-		return EOS_CNY
-	}
-	return ""
-}

@@ -8,8 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Giantmen/trader/config"
-	"github.com/Giantmen/trader/log"
 	"github.com/Giantmen/trader/proto"
 	"github.com/Giantmen/trader/util"
 )
@@ -35,11 +33,11 @@ type Chbtc struct {
 	timeout   int
 }
 
-func NewChbtc(cfg *config.Server) (*Chbtc, error) {
+func NewChbtc(accessKey, secretKey string, timeout int) (*Chbtc, error) {
 	return &Chbtc{
-		accessKey: cfg.Accesskey,
-		secretKey: cfg.Secretkey,
-		timeout:   cfg.Timeout,
+		accessKey: accessKey,
+		secretKey: secretKey,
+		timeout:   timeout,
 	}, nil
 }
 
@@ -47,13 +45,11 @@ func (chbtc *Chbtc) GetTicker(currencyPair string) (float64, error) {
 	url := fmt.Sprintf(MARKET_URL + fmt.Sprintf(TICKER_API, currencyPair))
 	rep, err := util.Request("GET", url, "application/json", nil, nil, chbtc.timeout)
 	if err != nil {
-		log.Error("request err", proto.Chbtc, currencyPair, err)
-		return 0, err
+		return 0, fmt.Errorf("%s request err %s %v", proto.Chbtc, currencyPair, err)
 	}
 	body := Market{}
 	if err := json.Unmarshal(rep, &body); err != nil {
-		log.Error("json Unmarshal err ", proto.Chbtc, currencyPair, err)
-		return 0, err
+		return 0, fmt.Errorf("%s json Unmarshal err %s %v", proto.Chbtc, currencyPair, err)
 	}
 	return strconv.ParseFloat(body.Ticker.Last, 64)
 }
@@ -62,13 +58,11 @@ func (chbtc *Chbtc) GetPriceOfDepth(size, depth int, currencyPair string) (*prot
 	url := MARKET_URL + fmt.Sprintf(DEPTH_API, currencyPair, size)
 	rep, err := util.Request("GET", url, "application/json", nil, nil, 4)
 	if err != nil {
-		log.Error("request err", proto.Chbtc, currencyPair, err)
-		return nil, err
+		return nil, fmt.Errorf("%s request err %s %v", proto.Chbtc, currencyPair, err)
 	}
 	body := Depth{}
 	if err := json.Unmarshal(rep, &body); err != nil {
-		log.Error("json Unmarshal err", proto.Chbtc, currencyPair, err)
-		return nil, err
+		return nil, fmt.Errorf("%s json Unmarshal err %s %v", proto.Chbtc, currencyPair, err)
 	}
 
 	var sellsum float64
@@ -111,14 +105,12 @@ func (chbtc *Chbtc) GetAccount() (*proto.Account, error) {
 	rep, err := util.Request("POST", TRADE_URL+GET_ACCOUNT_API, "application/x-www-form-urlencoded",
 		strings.NewReader(params.Encode()), nil, chbtc.timeout)
 	if err != nil {
-		log.Error("request GetAccount err", err)
-		return nil, err
+		return nil, fmt.Errorf("request GetAccount err %v", err)
 	}
 	myaccount := MyAccount{}
 	err = json.Unmarshal(rep, &myaccount)
 	if err != nil {
-		log.Error("json Unmarshal err", err)
-		return nil, err
+		return nil, fmt.Errorf("json Unmarshal err %v", err)
 	}
 
 	account := proto.Account{}
@@ -179,13 +171,11 @@ func (chbtc *Chbtc) placeOrder(side int, amount, price string, currencyPair stri
 		witchside = proto.SELL
 	}
 	if err != nil {
-		log.Errorf("request %s err:%v", witchside, err)
-		return nil, err
+		return nil, fmt.Errorf("request %s err:%v", witchside, err)
 	}
 	myorder := MyOrder{}
 	if err := json.Unmarshal(rep, &myorder); err != nil {
-		log.Error("json Unmarshal err", err, string(rep))
-		return nil, err
+		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
 	}
 	return chbtc.parseOrder(&myorder)
 	//log.Debug("order price:", order.Price, "send price:", price) //对比执行完订单和下发的区别
@@ -210,17 +200,13 @@ func (chbtc *Chbtc) CancelOrder(orderId string, currencyPair string) (bool, erro
 		"application/x-www-form-urlencoded", strings.NewReader(params.Encode()),
 		nil, chbtc.timeout)
 	if err != nil {
-		log.Error("request CancelOrder err", err)
-		return false, err
+		return false, fmt.Errorf("request CancelOrder err %v", err)
 	}
-
-	log.Debug("rep:", string(rep)) //////////////////////debug
 
 	body := Respons{}
 	err = json.Unmarshal(rep, &body)
 	if err != nil {
-		log.Error("json Unmarshal err", err)
-		return false, err
+		return false, fmt.Errorf("json Unmarshal err %v", err)
 	}
 	if body.Code == "1000" {
 		return true, nil
@@ -270,13 +256,11 @@ func (chbtc *Chbtc) GetOneOrder(orderId string, currencyPair string) (*proto.Ord
 		"application/x-www-form-urlencoded", strings.NewReader(params.Encode()),
 		nil, chbtc.timeout)
 	if err != nil {
-		log.Error("request GetOneOrder err", err, orderId)
-		return nil, err
+		return nil, fmt.Errorf("request GetOneOrder err %v %s", err, orderId)
 	}
 	myorder := MyOrder{}
 	if err := json.Unmarshal(rep, &myorder); err != nil {
-		log.Error("json Unmarshal err", err, string(rep))
-		return nil, err
+		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
 	}
 	return chbtc.parseOrder(&myorder)
 }
@@ -293,21 +277,17 @@ func (chbtc *Chbtc) GetUnfinishOrders(currencyPair string) (*[]proto.Order, erro
 		"application/x-www-form-urlencoded", strings.NewReader(params.Encode()),
 		nil, chbtc.timeout)
 	if err != nil {
-		log.Error("request GetUnfinishOrders err", err)
-		return nil, err
+		return nil, fmt.Errorf("request GetUnfinishOrders err %s", err)
 	}
 
 	myorders := []MyOrder{}
 	if err := json.Unmarshal(rep, &myorders); err != nil {
-		log.Error("json Unmarshal err", err, string(rep))
-		return nil, err
+		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
 	}
 	orders := []proto.Order{}
 	for _, myorder := range myorders {
 		if order, err := chbtc.parseOrder(&myorder); err != nil {
 			orders = append(orders, *order)
-		} else {
-			log.Error("get order err", err)
 		}
 	}
 	return &orders, nil

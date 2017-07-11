@@ -8,8 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Giantmen/trader/config"
-	"github.com/Giantmen/trader/log"
 	"github.com/Giantmen/trader/proto"
 	"github.com/Giantmen/trader/util"
 )
@@ -33,11 +31,11 @@ type YunBi struct {
 	timeout   int
 }
 
-func NewYunBi(cfg *config.Server) (*YunBi, error) {
+func NewYunBi(accessKey, secretKey string, timeout int) (*YunBi, error) {
 	return &YunBi{
-		accessKey: cfg.Accesskey,
-		secretKey: cfg.Secretkey,
-		timeout:   cfg.Timeout,
+		accessKey: accessKey,
+		secretKey: secretKey,
+		timeout:   timeout,
 	}, nil
 }
 
@@ -45,13 +43,11 @@ func (yunbi *YunBi) GetTicker(currencyPair string) (float64, error) {
 	url := fmt.Sprintf(API_URL+API_URI_PREFIX+TICKER_URL, yunbi.convertCurrencyPair(currencyPair))
 	rep, err := util.Request("GET", url, "application/json", nil, nil, yunbi.timeout)
 	if err != nil {
-		log.Error("request err", proto.Yunbi, currencyPair, err)
-		return 0, err
+		return 0, fmt.Errorf("%s request err %s %v", proto.Yunbi, currencyPair, err)
 	}
 	body := Market{}
 	if err := json.Unmarshal(rep, &body); err != nil {
-		log.Error("json Unmarshal err ", proto.Yunbi, currencyPair, err)
-		return 0, err
+		return 0, fmt.Errorf("%s json Unmarshal err %s %v", proto.Yunbi, currencyPair, err)
 	}
 	return body.Ticker.Last, nil
 }
@@ -60,13 +56,11 @@ func (yunbi *YunBi) GetPriceOfDepth(size, depth int, currencyPair string) (*prot
 	url := fmt.Sprintf(API_URL+API_URI_PREFIX+DEPTH_URL, yunbi.convertCurrencyPair(currencyPair), size)
 	rep, err := util.Request("GET", url, "application/json", nil, nil, yunbi.timeout)
 	if err != nil {
-		log.Error("request err", proto.Yunbi, currencyPair, err)
-		return nil, err
+		return nil, fmt.Errorf("%s request err %s %v", proto.Yunbi, currencyPair, err)
 	}
 	body := Depth{}
 	if err := json.Unmarshal(rep, &body); err != nil {
-		log.Error("json Unmarshal err ", proto.Yunbi, currencyPair, err)
-		return nil, err
+		return nil, fmt.Errorf("%s json Unmarshal err %s %v", proto.Yunbi, currencyPair, err)
 	}
 
 	var sellsum float64
@@ -78,12 +72,10 @@ func (yunbi *YunBi) GetPriceOfDepth(size, depth int, currencyPair string) (*prot
 	for i := len - 1; i >= 0; i-- {
 		price, err := strconv.ParseFloat((body.Asks[i][0]), 64)
 		if err != nil {
-			log.Error("err", err)
 			continue
 		}
 		sum, err := strconv.ParseFloat((body.Asks[i][1]), 64)
 		if err != nil {
-			log.Error("err", err)
 			continue
 		}
 		sellsum += sum
@@ -96,12 +88,10 @@ func (yunbi *YunBi) GetPriceOfDepth(size, depth int, currencyPair string) (*prot
 	for i := 0; i < len; i++ {
 		price, err := strconv.ParseFloat((body.Bids[i][0]), 64)
 		if err != nil {
-			log.Error("err", err)
 			continue
 		}
 		sum, err := strconv.ParseFloat((body.Bids[i][1]), 64)
 		if err != nil {
-			log.Error("err", err)
 			continue
 		}
 		buysum += sum
@@ -116,8 +106,8 @@ func (yunbi *YunBi) GetPriceOfDepth(size, depth int, currencyPair string) (*prot
 			Sell: sellprice,
 			Buy:  buyprice,
 		}
-		data, _ := json.Marshal(price)
-		log.Debug("yunbi body ", string(data))
+		//data, _ := json.Marshal(price)
+		//log.Debug("yunbi body ", string(data))
 		//return fmt.Sprintf("etc\nselldepth %0.3f price:%0.3f\nbuydepth %0.3f price:%0.3f", sellsum, sellprice, buysum, buyprice)
 		return &price, nil
 	}
@@ -131,14 +121,12 @@ func (yunbi *YunBi) GetAccount() (*proto.Account, error) {
 
 	rep, err := util.Request("GET", urls+"?"+params.Encode(), "application/json", nil, nil, yunbi.timeout)
 	if err != nil {
-		log.Error("request GetAccount err", err)
-		return nil, err
+		return nil, fmt.Errorf("request GetAccount err %v", err)
 	}
 	myaccount := MyAccount{}
 	err = json.Unmarshal(rep, &myaccount)
 	if err != nil {
-		log.Error("json Unmarshal err", err)
-		return nil, err
+		return nil, fmt.Errorf("json Unmarshal err %s", err)
 	}
 
 	account := proto.Account{}
@@ -166,14 +154,12 @@ func (yunbi *YunBi) placeOrder(side, amount, price string, currencyPair string) 
 		"application/x-www-form-urlencoded", strings.NewReader(params.Encode()),
 		nil, yunbi.timeout)
 	if err != nil {
-		log.Errorf("request %s err:%v", side, err)
-		return nil, err
+		return nil, fmt.Errorf("request %s err:%v", side, err)
 	}
-	log.Debugf("%s %s", side, string(rep))
+	//log.Debugf("%s %s", side, string(rep))
 	myorder := MyOrder{}
 	if err := json.Unmarshal(rep, &myorder); err != nil {
-		log.Error("json Unmarshal err", err, string(rep))
-		return nil, err
+		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
 	}
 	return yunbi.parseOrder(&myorder)
 }
@@ -195,13 +181,12 @@ func (yunbi *YunBi) CancelOrder(orderId string, currencyPair string) (bool, erro
 		"application/x-www-form-urlencoded", strings.NewReader(params.Encode()),
 		nil, yunbi.timeout)
 	if err != nil {
-		log.Error("request CancelOrder err", err)
-		return false, err
+		return false, fmt.Errorf("request CancelOrder err %s", err)
 	}
 	if rep == nil {
 		return false, err
 	}
-	log.Debug("cancel:", string(rep))
+	//log.Debug("cancel:", string(rep))
 	return true, nil
 }
 
@@ -231,15 +216,13 @@ func (yunbi *YunBi) GetOneOrder(orderId string, currencyPair string) (*proto.Ord
 	rep, err := util.Request("GET", API_URL+API_URI_PREFIX+GET_ORDER_API+"?"+params.Encode(),
 		"application/x-www-form-urlencoded", nil, nil, yunbi.timeout)
 	if err != nil {
-		log.Error("request GetOneOrder err", err)
-		return nil, err
+		return nil, fmt.Errorf("request GetOneOrder err %v", err)
 	}
-	log.Debug("getorder:", string(rep))
+	//log.Debug("getorder:", string(rep))
 
 	myorder := MyOrder{}
 	if err := json.Unmarshal(rep, &myorder); err != nil {
-		log.Error("json Unmarshal err", err, string(rep))
-		return nil, err
+		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
 	}
 	return yunbi.parseOrder(&myorder)
 }
@@ -253,21 +236,17 @@ func (yunbi *YunBi) GetUnfinishOrders(currencyPair string) (*[]proto.Order, erro
 	rep, err := util.Request("GET", API_URL+API_URI_PREFIX+PLACE_ORDER_API+"?"+params.Encode(),
 		"application/x-www-form-urlencoded", nil, nil, yunbi.timeout)
 	if err != nil {
-		log.Error("request GetUnfinishOrders err", err)
-		return nil, err
+		return nil, fmt.Errorf("request GetUnfinishOrders err %v", err)
 	}
 
 	myorders := []MyOrder{}
 	if err := json.Unmarshal(rep, &myorders); err != nil {
-		log.Error("json Unmarshal err", err, string(rep))
-		return nil, err
+		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
 	}
 	orders := []proto.Order{}
 	for _, myorder := range myorders {
 		if order, err := yunbi.parseOrder(&myorder); err != nil {
 			orders = append(orders, *order)
-		} else {
-			log.Error("get order err", err)
 		}
 	}
 	return &orders, nil
