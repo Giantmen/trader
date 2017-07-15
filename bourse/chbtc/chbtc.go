@@ -54,7 +54,7 @@ func (chbtc *Chbtc) GetTicker(currencyPair string) (float64, error) {
 	return strconv.ParseFloat(body.Ticker.Last, 64)
 }
 
-func (chbtc *Chbtc) GetPriceOfDepth(size, depth int, currencyPair string) (*proto.Price, error) {
+func (chbtc *Chbtc) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
 	url := MARKET_URL + fmt.Sprintf(DEPTH_API, currencyPair, size)
 	rep, err := util.Request("GET", url, "application/json", nil, nil, 4)
 	if err != nil {
@@ -115,7 +115,7 @@ func (chbtc *Chbtc) GetAccount() (*proto.Account, error) {
 
 	account := proto.Account{}
 	account.Asset = myaccount.Result.NetAssets
-	account.Bourse = proto.Chbtc
+	account.Bourse = strings.ToLower(proto.Chbtc)
 	account.SubAccounts = make(map[string]proto.SubAccount)
 
 	//cny
@@ -152,7 +152,7 @@ func (chbtc *Chbtc) GetAccount() (*proto.Account, error) {
 	return &account, nil
 }
 
-func (chbtc *Chbtc) placeOrder(side int, amount, price string, currencyPair string) (*proto.Order, error) {
+func (chbtc *Chbtc) placeOrder(side int, amount, price, currencyPair string) (*proto.Order, error) {
 	params := url.Values{}
 	params.Set("method", "order")
 	params.Set("price", price)
@@ -173,23 +173,30 @@ func (chbtc *Chbtc) placeOrder(side int, amount, price string, currencyPair stri
 	if err != nil {
 		return nil, fmt.Errorf("request %s err:%v", witchside, err)
 	}
-	myorder := MyOrder{}
-	if err := json.Unmarshal(rep, &myorder); err != nil {
+	placeOrder := PlaceOrder{}
+	if err := json.Unmarshal(rep, &placeOrder); err != nil {
 		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
+	}
+	if placeOrder.Code != 1000 {
+		return nil, fmt.Errorf("%s err:%v", witchside, placeOrder.Message)
+	}
+	myorder := MyOrder{
+		ID:       placeOrder.ID,
+		Currency: currencyPair,
 	}
 	return chbtc.parseOrder(&myorder)
 	//log.Debug("order price:", order.Price, "send price:", price) //对比执行完订单和下发的区别
 }
 
-func (chbtc *Chbtc) Buy(amount, price string, currencyPair string) (*proto.Order, error) {
+func (chbtc *Chbtc) Buy(amount, price, currencyPair string) (*proto.Order, error) {
 	return chbtc.placeOrder(proto.BUY_N, amount, price, currencyPair)
 }
 
-func (chbtc *Chbtc) Sell(amount, price string, currencyPair string) (*proto.Order, error) {
+func (chbtc *Chbtc) Sell(amount, price, currencyPair string) (*proto.Order, error) {
 	return chbtc.placeOrder(proto.SELL_N, amount, price, currencyPair)
 }
 
-func (chbtc *Chbtc) CancelOrder(orderId string, currencyPair string) (bool, error) {
+func (chbtc *Chbtc) CancelOrder(orderId, currencyPair string) (bool, error) {
 	params := url.Values{}
 	params.Set("method", "cancelOrder")
 	params.Set("id", orderId)
@@ -208,10 +215,10 @@ func (chbtc *Chbtc) CancelOrder(orderId string, currencyPair string) (bool, erro
 	if err != nil {
 		return false, fmt.Errorf("json Unmarshal err %v", err)
 	}
-	if body.Code == "1000" {
+	if body.Code == 1000 {
 		return true, nil
 	}
-	return false, fmt.Errorf("code:%s,err:%s", body.Code, body.Message)
+	return false, fmt.Errorf("orderid:%s err:%s", orderId, body.Message)
 }
 
 func (chbtc *Chbtc) parseOrder(myorder *MyOrder) (*proto.Order, error) {
@@ -245,7 +252,7 @@ func (chbtc *Chbtc) parseOrder(myorder *MyOrder) (*proto.Order, error) {
 	}, nil
 }
 
-func (chbtc *Chbtc) GetOneOrder(orderId string, currencyPair string) (*proto.Order, error) {
+func (chbtc *Chbtc) GetOneOrder(orderId, currencyPair string) (*proto.Order, error) {
 	params := url.Values{}
 	params.Set("method", "getOrder")
 	params.Set("id", orderId)

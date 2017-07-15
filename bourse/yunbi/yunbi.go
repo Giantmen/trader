@@ -52,7 +52,7 @@ func (yunbi *YunBi) GetTicker(currencyPair string) (float64, error) {
 	return body.Ticker.Last, nil
 }
 
-func (yunbi *YunBi) GetPriceOfDepth(size, depth int, currencyPair string) (*proto.Price, error) {
+func (yunbi *YunBi) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
 	url := fmt.Sprintf(API_URL+API_URI_PREFIX+DEPTH_URL, yunbi.convertCurrencyPair(currencyPair), size)
 	rep, err := util.Request("GET", url, "application/json", nil, nil, yunbi.timeout)
 	if err != nil {
@@ -143,7 +143,7 @@ func (yunbi *YunBi) GetAccount() (*proto.Account, error) {
 	return &account, nil
 }
 
-func (yunbi *YunBi) placeOrder(side, amount, price string, currencyPair string) (*proto.Order, error) {
+func (yunbi *YunBi) placeOrder(side, amount, price, currencyPair string) (*proto.Order, error) {
 	params := url.Values{}
 	params.Set("market", yunbi.convertCurrencyPair(currencyPair))
 	params.Set("side", side)
@@ -164,15 +164,15 @@ func (yunbi *YunBi) placeOrder(side, amount, price string, currencyPair string) 
 	return yunbi.parseOrder(&myorder)
 }
 
-func (yunbi *YunBi) Buy(amount, price string, currencyPair string) (*proto.Order, error) {
+func (yunbi *YunBi) Buy(amount, price, currencyPair string) (*proto.Order, error) {
 	return yunbi.placeOrder(proto.BUY, amount, price, currencyPair)
 }
 
-func (yunbi *YunBi) Sell(amount, price string, currencyPair string) (*proto.Order, error) {
+func (yunbi *YunBi) Sell(amount, price, currencyPair string) (*proto.Order, error) {
 	return yunbi.placeOrder(proto.SELL, amount, price, currencyPair)
 }
 
-func (yunbi *YunBi) CancelOrder(orderId string, currencyPair string) (bool, error) {
+func (yunbi *YunBi) CancelOrder(orderId, currencyPair string) (bool, error) {
 	params := url.Values{}
 	params.Set("id", orderId)
 	yunbi.buildPostForm("POST", API_URI_PREFIX+DELETE_ORDER_API, &params)
@@ -208,7 +208,7 @@ func (yunbi *YunBi) parseOrder(myorder *MyOrder) (*proto.Order, error) {
 	//log.Debug("order price:", order.Price, "send price:", price) //对比执行完订单和下发的区别
 }
 
-func (yunbi *YunBi) GetOneOrder(orderId string, currencyPair string) (*proto.Order, error) {
+func (yunbi *YunBi) GetOneOrder(orderId, currencyPair string) (*proto.Order, error) {
 	params := url.Values{}
 	params.Set("id", orderId)
 	yunbi.buildPostForm("GET", API_URI_PREFIX+GET_ORDER_API, &params)

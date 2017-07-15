@@ -1,7 +1,7 @@
 package chbtc
 
 type Respons struct {
-	Code    string
+	Code    int
 	Message string
 }
 
@@ -139,4 +139,10 @@ type MyOrder struct {
 	TradeMoney  float64 `json:"trade_money"`
 	TradePrice  float64 `json:"trade_price"`
 	Type        int     `json:"type"`
+}
+
+type PlaceOrder struct {
+	Code    int    `json:"code"`
+	ID      string `json:"id"`
+	Message string `json:"message"`
 }

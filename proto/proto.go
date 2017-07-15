@@ -1,10 +1,10 @@
 package proto
 
 type DepthQuery struct {
-	Size     int    `json:"size"`
-	Depth    int    `json:"depth"`
-	Bourse   string `validate:"required" json:"bourse"`
-	Currency string `validate:"required" json:"currency"`
+	Size     int     `json:"size"`
+	Depth    float64 `json:"depth"`
+	Bourse   string  `validate:"required" json:"bourse"`
+	Currency string  `validate:"required" json:"currency"`
 }
 
 type Price struct {

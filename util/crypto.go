@@ -19,6 +19,12 @@ func MD5Sign(secret, msg string) (string, error) {
 	return hex.EncodeToString(mac.Sum(nil)), nil
 }
 
+func MD5(secret string) (string, error) {
+	hash := md5.New()
+	hash.Write([]byte(secret))
+	return hex.EncodeToString(hash.Sum(nil)), nil
+}
+
 // SHA1计算消息摘要
 func SHA1(msg string) (string, error) {
 	sha := sha1.New()
