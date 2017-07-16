@@ -282,6 +282,7 @@ func (y *YunBi) convertCurrencyPair(currencyPair string) string {
 		return "ltccny"
 	case proto.EOS_CNY:
 		return "eoscny"
+	default:
+		return ""
 	}
-	return "btccny"
 }

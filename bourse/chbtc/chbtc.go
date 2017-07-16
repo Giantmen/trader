@@ -64,6 +64,9 @@ func (chbtc *Chbtc) GetPriceOfDepth(size int, depth float64, currencyPair string
 	if err := json.Unmarshal(rep, &body); err != nil {
 		return nil, fmt.Errorf("%s json Unmarshal err %s %v", proto.Chbtc, currencyPair, err)
 	}
+	if body.Error != "" {
+		return nil, fmt.Errorf("%s json Unmarshal err %s %v", proto.Chbtc, currencyPair, body.Error)
+	}
 
 	var sellsum float64
 	var sellprice float64
@@ -268,6 +271,9 @@ func (chbtc *Chbtc) GetOneOrder(orderId, currencyPair string) (*proto.Order, err
 	myorder := MyOrder{}
 	if err := json.Unmarshal(rep, &myorder); err != nil {
 		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
+	}
+	if myorder.Code > 0 {
+		return nil, fmt.Errorf("GetOneOrder err id:%s %s", orderId, myorder.Message)
 	}
 	return chbtc.parseOrder(&myorder)
 }
