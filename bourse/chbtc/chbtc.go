@@ -56,6 +56,7 @@ func (chbtc *Chbtc) GetTicker(currencyPair string) (float64, error) {
 
 func (chbtc *Chbtc) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
 	url := MARKET_URL + fmt.Sprintf(DEPTH_API, currencyPair, size)
+	//fmt.Println("chbtc get depth:", url)
 	rep, err := util.Request("GET", url, "application/json", nil, nil, 4)
 	if err != nil {
 		return nil, fmt.Errorf("%s request err %s %v", proto.Chbtc, currencyPair, err)
