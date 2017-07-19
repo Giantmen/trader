@@ -244,6 +244,9 @@ func (b *Btctrade) GetOneOrder(orderId, currencyPair string) (*proto.Order, erro
 	if err := json.Unmarshal(rep, &myorder); err != nil {
 		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
 	}
+	if myorder.ID == 0 && !myorder.Result {
+		return nil, fmt.Errorf("GetOneOrder err id: %s %s", orderId, myorder.Message)
+	}
 	order, err := b.parseOrder(&myorder)
 	if err != nil {
 		return order, err
@@ -302,8 +305,9 @@ func (b *Btctrade) convertCurrencyPair(currencyPair string) string {
 		return "etc"
 	case proto.LTC_CNY:
 		return "ltc"
+	default:
+		return ""
 	}
-	return "btc"
 }
 
 func (b *Btctrade) convertFee(currencyPair string) float64 {

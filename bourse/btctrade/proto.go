@@ -35,6 +35,8 @@ type OrderReply struct {
 }
 
 type MyOrder struct {
+	Result            bool    `json:"result"`
+	Message           string  `json:"message"`
 	AmountOriginal    float64 `json:"amount_original"`
 	AmountOutstanding float64 `json:"amount_outstanding"`
 	Datetime          string  `json:"datetime"`

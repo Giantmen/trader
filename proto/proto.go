@@ -53,8 +53,8 @@ type Order struct {
 
 //account
 type AccountQuery struct {
-	Bourse   string   `validate:"required" json:"bourse"`
-	Accounts []string `validate:"required" json:"accounts"`
+	Bourse string `validate:"required" json:"bourse"`
+	//Accounts []string `validate:"required" json:"accounts"`
 }
 
 type AccountReply struct {

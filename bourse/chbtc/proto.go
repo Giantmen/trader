@@ -20,8 +20,9 @@ type Ticker struct {
 
 //depth
 type Depth struct {
-	Asks [][]float64 `json:"asks"`
-	Bids [][]float64 `json:"bids"`
+	Asks  [][]float64 `json:"asks"`
+	Bids  [][]float64 `json:"bids"`
+	Error string      `json:"error"`
 	//Timestamp int         `json:"timestamp"`
 }
 
@@ -128,6 +129,8 @@ type MyAccount struct {
 }
 
 type MyOrder struct {
+	Code        int     `json:"code"`
+	Message     string  `json:"message"`
 	Currency    string  `json:"currency"`
 	Fees        float64 `json:"fees"`
 	ID          string  `json:"id"`
