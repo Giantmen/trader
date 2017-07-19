@@ -43,7 +43,6 @@ func (b *Btctrade) GetTicker(currencyPair string) (float64, error) {
 // 获取满足某个深度的价格
 func (b *Btctrade) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
 	url := fmt.Sprintf(API_URL+DEPTH_URL, b.convertCurrencyPair(currencyPair))
-	//fmt.Println("btctrade get depth:", url)
 	rep, err := util.Request("GET", url, "", nil, nil, b.timeout)
 	if err != nil {
 		return nil, err
