@@ -21,11 +21,29 @@ type Depth struct {
 	//Ts int `json:"ts"`
 	Status string `json:"status"`
 	Tick   struct {
-		Asks    [][]float64 `json:"asks"`
-		Bids    [][]float64 `json:"bids"`
-		Ts      int         `json:"ts"`
-		Version int         `json:"version"`
+		Asks [][]float64 `json:"asks"`
+		Bids [][]float64 `json:"bids"`
+		//Ts      int         `json:"ts"`
+		//Version int         `json:"version"`
 	} `json:"tick"`
+}
+
+type MyAccount struct {
+	Data interface{}
+	// Data struct {
+	// 	ID   int `json:"id"`
+	// 	List []struct {
+	// 		Balance  string `json:"balance"`
+	// 		Currency string `json:"currency"`
+	// 		Type     string `json:"type"`
+	// 	} `json:"list"`
+	// 	State string `json:"state"`
+	// 	Type  string `json:"type"`
+	// 	//User_id int    `json:"user-id"`
+	// } `json:"data"`
+	Status   string `json:"status"`
+	Err_code string `json:"err-code"`
+	Err_msg  string `json:"err-msg"`
 }
 
 //Response
