@@ -42,15 +42,15 @@ func (huobi *Huobi) GetPriceOfDepth(size int, depth float64, currencyPair string
 	url := API_URL + fmt.Sprintf(DEPTH_URL, huobi.convertCurrencyPair(currencyPair))
 	rep, err := util.Request("GET", url, "application/json", nil, nil, huobi.timeout)
 	if err != nil {
-		return nil, fmt.Errorf("%s request err %s %v", proto.Huobi, currencyPair, err)
+		return nil, fmt.Errorf("%s request err %s %v", proto.HuobiN, currencyPair, err)
 	}
 
 	body := Depth{}
 	if err := json.Unmarshal(rep, &body); err != nil {
-		return nil, fmt.Errorf("%s json Unmarshal err %s %v", proto.Huobi, currencyPair, err)
+		return nil, fmt.Errorf("%s json Unmarshal err %s %v", proto.HuobiN, currencyPair, err)
 	}
 	if body.Status != "ok" {
-		return nil, fmt.Errorf("%s json Unmarshal err %s %v", proto.Huobi, currencyPair, body.Status)
+		return nil, fmt.Errorf("%s json Unmarshal err %s %v", proto.HuobiN, currencyPair, body.Status)
 	}
 
 	var sellsum float64
@@ -129,7 +129,7 @@ func (huobi *Huobi) GetAccount() (*proto.Account, error) {
 		return nil, fmt.Errorf("json Unmarshal err %v", err)
 	}
 	if myaccount.Status != "ok" {
-		return nil, fmt.Errorf("%s json Unmarshal err %s %s", proto.Huobi, myaccount.Err_code, myaccount.Err_msg)
+		return nil, fmt.Errorf("%s json Unmarshal err %s %s", proto.HuobiN, myaccount.Err_code, myaccount.Err_msg)
 	}
 
 	account := proto.Account{}

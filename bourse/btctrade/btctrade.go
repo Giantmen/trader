@@ -24,14 +24,14 @@ var (
 
 type Btctrade struct {
 	accessKey string
-	secretkey string
+	secretKey string
 	timeout   int
 }
 
-func NewBtctrade(accessKey, secretkey string, timeout int) (*Btctrade, error) {
+func NewBtctrade(accessKey, secretKey string, timeout int) (*Btctrade, error) {
 	return &Btctrade{
 		accessKey: accessKey,
-		secretkey: secretkey,
+		secretKey: secretKey,
 		timeout:   timeout,
 	}, nil
 }
@@ -283,7 +283,7 @@ func (b *Btctrade) buildPostForm(postForm *url.Values) error {
 	postForm.Set("version", fmt.Sprintf("%d", 2))
 	payload := postForm.Encode()
 
-	md5sign, err := util.MD5(b.secretkey)
+	md5sign, err := util.MD5(b.secretKey)
 	if err != nil {
 		return err
 	}

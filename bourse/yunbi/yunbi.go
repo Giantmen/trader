@@ -25,21 +25,21 @@ var (
 	PLACE_ORDER_API  = "orders.json"
 )
 
-type YunBi struct {
+type Yunbi struct {
 	accessKey string
 	secretKey string
 	timeout   int
 }
 
-func NewYunBi(accessKey, secretKey string, timeout int) (*YunBi, error) {
-	return &YunBi{
+func NewYunbi(accessKey, secretKey string, timeout int) (*Yunbi, error) {
+	return &Yunbi{
 		accessKey: accessKey,
 		secretKey: secretKey,
 		timeout:   timeout,
 	}, nil
 }
 
-func (yunbi *YunBi) GetTicker(currencyPair string) (float64, error) {
+func (yunbi *Yunbi) GetTicker(currencyPair string) (float64, error) {
 	url := fmt.Sprintf(API_URL+API_URI_PREFIX+TICKER_URL, yunbi.convertCurrencyPair(currencyPair))
 	rep, err := util.Request("GET", url, "application/json", nil, nil, yunbi.timeout)
 	if err != nil {
@@ -52,7 +52,7 @@ func (yunbi *YunBi) GetTicker(currencyPair string) (float64, error) {
 	return body.Ticker.Last, nil
 }
 
-func (yunbi *YunBi) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
+func (yunbi *Yunbi) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
 	url := fmt.Sprintf(API_URL+API_URI_PREFIX+DEPTH_URL, yunbi.convertCurrencyPair(currencyPair), size)
 	rep, err := util.Request("GET", url, "application/json", nil, nil, yunbi.timeout)
 	if err != nil {
@@ -114,7 +114,7 @@ func (yunbi *YunBi) GetPriceOfDepth(size int, depth float64, currencyPair string
 	return nil, fmt.Errorf("sum not enough sell:%v buy:%v depth:%v", sellsum, buysum, depth)
 }
 
-func (yunbi *YunBi) GetAccount() (*proto.Account, error) {
+func (yunbi *Yunbi) GetAccount() (*proto.Account, error) {
 	urls := API_URL + API_URI_PREFIX + USER_INFO_URL
 	params := url.Values{}
 	yunbi.buildPostForm("GET", API_URI_PREFIX+USER_INFO_URL, &params)
@@ -143,7 +143,7 @@ func (yunbi *YunBi) GetAccount() (*proto.Account, error) {
 	return &account, nil
 }
 
-func (yunbi *YunBi) placeOrder(side, amount, price, currencyPair string) (*proto.Order, error) {
+func (yunbi *Yunbi) placeOrder(side, amount, price, currencyPair string) (*proto.Order, error) {
 	params := url.Values{}
 	params.Set("market", yunbi.convertCurrencyPair(currencyPair))
 	params.Set("side", side)
@@ -164,15 +164,15 @@ func (yunbi *YunBi) placeOrder(side, amount, price, currencyPair string) (*proto
 	return yunbi.parseOrder(&myorder)
 }
 
-func (yunbi *YunBi) Buy(amount, price, currencyPair string) (*proto.Order, error) {
+func (yunbi *Yunbi) Buy(amount, price, currencyPair string) (*proto.Order, error) {
 	return yunbi.placeOrder(proto.BUY, amount, price, currencyPair)
 }
 
-func (yunbi *YunBi) Sell(amount, price, currencyPair string) (*proto.Order, error) {
+func (yunbi *Yunbi) Sell(amount, price, currencyPair string) (*proto.Order, error) {
 	return yunbi.placeOrder(proto.SELL, amount, price, currencyPair)
 }
 
-func (yunbi *YunBi) CancelOrder(orderId, currencyPair string) (bool, error) {
+func (yunbi *Yunbi) CancelOrder(orderId, currencyPair string) (bool, error) {
 	params := url.Values{}
 	params.Set("id", orderId)
 	yunbi.buildPostForm("POST", API_URI_PREFIX+DELETE_ORDER_API, &params)
@@ -190,7 +190,7 @@ func (yunbi *YunBi) CancelOrder(orderId, currencyPair string) (bool, error) {
 	return true, nil
 }
 
-func (yunbi *YunBi) parseOrder(myorder *MyOrder) (*proto.Order, error) {
+func (yunbi *Yunbi) parseOrder(myorder *MyOrder) (*proto.Order, error) {
 	Price, _ := strconv.ParseFloat(myorder.Price, 64)
 	DealedAmount, _ := strconv.ParseFloat(myorder.ExecutedVolume, 64)
 	amount, _ := strconv.ParseFloat(myorder.Volume, 64)
@@ -208,7 +208,7 @@ func (yunbi *YunBi) parseOrder(myorder *MyOrder) (*proto.Order, error) {
 	//log.Debug("order price:", order.Price, "send price:", price) //对比执行完订单和下发的区别
 }
 
-func (yunbi *YunBi) GetOneOrder(orderId, currencyPair string) (*proto.Order, error) {
+func (yunbi *Yunbi) GetOneOrder(orderId, currencyPair string) (*proto.Order, error) {
 	params := url.Values{}
 	params.Set("id", orderId)
 	yunbi.buildPostForm("GET", API_URI_PREFIX+GET_ORDER_API, &params)
@@ -227,7 +227,7 @@ func (yunbi *YunBi) GetOneOrder(orderId, currencyPair string) (*proto.Order, err
 	return yunbi.parseOrder(&myorder)
 }
 
-func (yunbi *YunBi) GetUnfinishOrders(currencyPair string) (*[]proto.Order, error) {
+func (yunbi *Yunbi) GetUnfinishOrders(currencyPair string) (*[]proto.Order, error) {
 	params := url.Values{}
 	params.Set("market", yunbi.convertCurrencyPair(currencyPair))
 	params.Set("state", "wait")
@@ -252,7 +252,7 @@ func (yunbi *YunBi) GetUnfinishOrders(currencyPair string) (*[]proto.Order, erro
 	return &orders, nil
 }
 
-func (yunbi *YunBi) buildPostForm(httpMethod, apiURI string, postForm *url.Values) error {
+func (yunbi *Yunbi) buildPostForm(httpMethod, apiURI string, postForm *url.Values) error {
 	postForm.Set("access_key", yunbi.accessKey)
 	postForm.Set("tonce", fmt.Sprintf("%d", time.Now().UnixNano()/1000000))
 
@@ -270,7 +270,7 @@ func (yunbi *YunBi) buildPostForm(httpMethod, apiURI string, postForm *url.Value
 	return nil
 }
 
-func (y *YunBi) convertCurrencyPair(currencyPair string) string {
+func (y *Yunbi) convertCurrencyPair(currencyPair string) string {
 	switch currencyPair {
 	case proto.BTC_CNY:
 		return "btccny"
