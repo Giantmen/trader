@@ -1,7 +1,8 @@
 package proto
 
 const (
-	Huobi    = "Huobi"
+	HuobiN   = "HuobiN"
+	HuobiO   = "HuobiO"
 	Chbtc    = "Chbtc"
 	Yunbi    = "Yunbi"
 	Btctrade = "Btctrade"
