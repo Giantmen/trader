@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-package huobin
-
-type Test struct{}
-=======
 package huobiN
 
 type Ticker struct {
