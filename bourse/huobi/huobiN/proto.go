@@ -50,4 +50,3 @@ type Order struct {
 	Timestamp        string `json:"Timestamp"`
 	Order_id         string `json:"order-id"`
 }
->>>>>>> 061303c1cd50f8136b235d820cd78db03cff40df
