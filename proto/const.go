@@ -8,6 +8,7 @@ const (
 	Btctrade = "Btctrade"
 	Btc38    = "Btc38"
 	Jubi     = "Jubi"
+	Bter     = "Bter"
 
 	LocalTime = "2006-01-02 15:04:05"
 	UTCTime   = "2006-01-02T15:04:05"
@@ -44,6 +45,7 @@ const (
 	BTS_CNY = "bts_cny"
 	BTS_BTC = "bts_btc"
 	EOS_CNY = "eos_cny"
+	SNT_CNY = "snt_cny"
 )
 const (
 	CNY = "cny"
@@ -53,6 +55,7 @@ const (
 	ETC = "etc"
 	BTS = "bts"
 	EOS = "eos"
+	SNT = "snt"
 )
 
 const (

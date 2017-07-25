@@ -54,6 +54,7 @@ func (yunbi *Yunbi) GetTicker(currencyPair string) (float64, error) {
 
 func (yunbi *Yunbi) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
 	url := fmt.Sprintf(API_URL+API_URI_PREFIX+DEPTH_URL, yunbi.convertCurrencyPair(currencyPair), size)
+	//println("url:", url)
 	rep, err := util.Request("GET", url, "application/json", nil, nil, yunbi.timeout)
 	if err != nil {
 		return nil, fmt.Errorf("%s request err %s %v", proto.Yunbi, currencyPair, err)
@@ -282,6 +283,8 @@ func (y *Yunbi) convertCurrencyPair(currencyPair string) string {
 		return "ltccny"
 	case proto.EOS_CNY:
 		return "eoscny"
+	case proto.SNT_CNY:
+		return "sntcny"
 	default:
 		return ""
 	}

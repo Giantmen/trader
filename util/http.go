@@ -26,11 +26,12 @@ func Request(method string, url string, bodyType string, body io.Reader, header 
 	case "POST":
 		if header != nil { //用于设置head
 			client := &http.Client{}
-			req, err := http.NewRequest("POST", url, nil)
+			req, err := http.NewRequest("POST", url, body)
 			if err != nil {
 				return nil, err
 			}
 			req.Header = header
+			req.Header.Set("Content-Type", bodyType)
 			resp, err = client.Do(req)
 			if err != nil {
 				return nil, err
