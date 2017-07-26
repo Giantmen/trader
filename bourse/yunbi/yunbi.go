@@ -106,9 +106,6 @@ func (yunbi *Yunbi) GetPriceOfDepth(size int, depth float64, currencyPair string
 			Sell: sellprice,
 			Buy:  buyprice,
 		}
-		//data, _ := json.Marshal(price)
-		//log.Debug("yunbi body ", string(data))
-		//return fmt.Sprintf("etc\nselldepth %0.3f price:%0.3f\nbuydepth %0.3f price:%0.3f", sellsum, sellprice, buysum, buyprice)
 		return &price, nil
 	}
 	return nil, fmt.Errorf("sum not enough sell:%v buy:%v depth:%v", sellsum, buysum, depth)
@@ -156,7 +153,6 @@ func (yunbi *Yunbi) placeOrder(side, amount, price, currencyPair string) (*proto
 	if err != nil {
 		return nil, fmt.Errorf("request %s err:%v", side, err)
 	}
-	//log.Debugf("%s %s", side, string(rep))
 	myorder := MyOrder{}
 	if err := json.Unmarshal(rep, &myorder); err != nil {
 		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
@@ -186,7 +182,6 @@ func (yunbi *Yunbi) CancelOrder(orderId, currencyPair string) (bool, error) {
 	if rep == nil {
 		return false, err
 	}
-	//log.Debug("cancel:", string(rep))
 	return true, nil
 }
 
@@ -194,18 +189,28 @@ func (yunbi *Yunbi) parseOrder(myorder *MyOrder) (*proto.Order, error) {
 	Price, _ := strconv.ParseFloat(myorder.Price, 64)
 	DealedAmount, _ := strconv.ParseFloat(myorder.ExecutedVolume, 64)
 	amount, _ := strconv.ParseFloat(myorder.Volume, 64)
+	var status string
+	switch myorder.State {
+	case "wait":
+		status = proto.ORDER_UNFINISH
+	case "done":
+		status = proto.ORDER_FINISH
+	case "cancel":
+		status = proto.ORDER_CANCEL
+	default:
+		status = myorder.State
+	}
 	return &proto.Order{
 		OrderID:      fmt.Sprintf("%d", myorder.ID),
 		Price:        Price,
 		Amount:       amount,
 		Currency:     myorder.Market,
 		DealedAmount: DealedAmount,
-		Status:       myorder.State,
+		Status:       status,
 		OrderTime:    time.Now().Format(proto.LocalTime),
 		Side:         myorder.Side,
 	}, nil
 	//order.Fee = 计算
-	//log.Debug("order price:", order.Price, "send price:", price) //对比执行完订单和下发的区别
 }
 
 func (yunbi *Yunbi) GetOneOrder(orderId, currencyPair string) (*proto.Order, error) {
@@ -218,8 +223,6 @@ func (yunbi *Yunbi) GetOneOrder(orderId, currencyPair string) (*proto.Order, err
 	if err != nil {
 		return nil, fmt.Errorf("request GetOneOrder err %v", err)
 	}
-	//log.Debug("getorder:", string(rep))
-
 	myorder := MyOrder{}
 	if err := json.Unmarshal(rep, &myorder); err != nil {
 		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
@@ -255,18 +258,13 @@ func (yunbi *Yunbi) GetUnfinishOrders(currencyPair string) (*[]proto.Order, erro
 func (yunbi *Yunbi) buildPostForm(httpMethod, apiURI string, postForm *url.Values) error {
 	postForm.Set("access_key", yunbi.accessKey)
 	postForm.Set("tonce", fmt.Sprintf("%d", time.Now().UnixNano()/1000000))
-
 	params := postForm.Encode()
 	payload := httpMethod + "|" + apiURI + "|" + params
-	//println(payload)
-
 	sign, err := util.SHA256Sign(yunbi.secretKey, payload)
 	if err != nil {
 		return err
 	}
-
 	postForm.Set("signature", sign)
-	//postForm.Del("secret_key")
 	return nil
 }
 
@@ -282,6 +280,8 @@ func (y *Yunbi) convertCurrencyPair(currencyPair string) string {
 		return "ltccny"
 	case proto.EOS_CNY:
 		return "eoscny"
+	case proto.SNT_CNY:
+		return "sntcny"
 	default:
 		return ""
 	}
