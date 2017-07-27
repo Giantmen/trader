@@ -99,15 +99,7 @@ func priceOfDepth(terms []interface{}, depth float64) (float64, error) {
 	return 0.0, errors.New("has no enough depth")
 }
 
-func (p *Poloniex) limitBuy(amount, price string, currency string) (*proto.Order, error) {
-	return p.placeLimitOrder(BUY, amount, price, currency)
-}
-
-func (p *Poloniex) limitSell(amount, price string, currency string) (*proto.Order, error) {
-	return p.placeLimitOrder(SELL, amount, price, currency)
-}
-
-func (p *Poloniex) placeLimitOrder(command Command, amount, price string, currency string) (*proto.Order, error) {
+func (p *Poloniex) placeOrder(command Command, amount, price string, currency string) (*proto.Order, error) {
 	v := url.Values{}
 	v.Set("command", command.String())
 	v.Set("currencyPair", strings.ToUpper(currency))
@@ -149,11 +141,11 @@ func (p *Poloniex) placeLimitOrder(command Command, amount, price string, curren
 }
 
 func (p *Poloniex) Buy(amount, price, currencyPair string) (*proto.Order, error) {
-	return p.limitBuy(amount, price, currencyPair)
+	return p.placeOrder(proto.BUY, amount, price, currencyPair)
 }
 
 func (p *Poloniex) Sell(amount, price, currencyPair string) (*proto.Order, error) {
-	return p.limitSell(amount, price, currencyPair)
+	return p.placeOrder(proto.SELL, amount, price, currencyPair)
 }
 
 func (p *Poloniex) GetOneOrder(orderId, currencyPair string) (*proto.Order, error) {
@@ -187,7 +179,7 @@ func (p *Poloniex) GetOneOrder(orderId, currencyPair string) (*proto.Order, erro
 	order.OrderID = orderId
 	order.Currency = currencyPair
 	for _, _ = range []TradeTerm(*or) {
-
+		//TODO
 	}
 
 	return &proto.Order{}, nil
@@ -259,10 +251,6 @@ func (p *Poloniex) CancelOrder(orderId, currencypair string) (bool, error) {
 }
 
 func (p *Poloniex) GetAccount() (*proto.Account, error) {
-	return p.getAccount()
-}
-
-func (p *Poloniex) getAccount() (*proto.Account, error) {
 	v := url.Values{}
 	v.Add("command", COMPLETEBALANCES)
 	v.Set("nonce", fmt.Sprintf("%d", time.Now().UnixNano()))
