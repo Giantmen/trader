@@ -1,11 +1,12 @@
 package proto
 
 const (
+	Poloniex = "Poloniex"
+	Btctrade = "Btctrade"
 	HuobiN   = "HuobiN"
 	HuobiO   = "HuobiO"
 	Chbtc    = "Chbtc"
 	Yunbi    = "Yunbi"
-	Btctrade = "Btctrade"
 	Btc38    = "Btc38"
 	Jubi     = "Jubi"
 	Bter     = "Bter"

@@ -12,8 +12,6 @@ import (
 	"github.com/Giantmen/trader/util"
 )
 
-const _EXCHANGE_NAME = "yunbi.com"
-
 var (
 	API_URL          = "https://yunbi.com"
 	API_URI_PREFIX   = "/api/v2/"

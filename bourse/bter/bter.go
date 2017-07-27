@@ -70,22 +70,60 @@ func (bter *Bter) GetPriceOfDepth(size int, depth float64, currencyPair string) 
 	var buysum float64
 	var buyprice float64
 	var len int = len(body.Asks)
-
 	for i := len - 1; i >= 0; i-- {
-		sellsum += body.Asks[i][1]
+		var sum float64
+		switch param := (body.Asks[i][1]).(type) {
+		case float64:
+			sum = param
+		case string:
+			if sum, err = strconv.ParseFloat(param, 64); err != nil {
+				continue
+			}
+		default:
+			continue
+		}
+		sellsum += sum
 		if sellsum > float64(depth) {
-			sellprice = body.Asks[i][0]
+			switch param := (body.Asks[i][0]).(type) {
+			case float64:
+				sellprice = param
+			case string:
+				if sellprice, err = strconv.ParseFloat(param, 64); err != nil {
+					continue
+				}
+			default:
+				continue
+			}
 			break
 		}
 	}
 
 	for i := 0; i < len; i++ {
-		buysum += body.Bids[i][1]
+		var sum float64
+		switch param := (body.Bids[i][1]).(type) {
+		case float64:
+			sum = param
+		case string:
+			if sum, err = strconv.ParseFloat(param, 64); err != nil {
+				continue
+			}
+		default:
+			continue
+		}
+		buysum += sum
 		if buysum > float64(depth) {
-			buyprice = body.Bids[i][0]
+			switch param := (body.Bids[i][0]).(type) {
+			case float64:
+				buyprice = param
+			case string:
+				if buyprice, err = strconv.ParseFloat(param, 64); err != nil {
+					continue
+				}
+			default:
+				continue
+			}
 			break
 		}
-
 	}
 	if sellsum > float64(depth) && buysum > float64(depth) {
 		return &proto.Price{

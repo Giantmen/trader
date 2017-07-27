@@ -6,10 +6,10 @@ type Market struct {
 }
 
 type Depth struct {
-	Asks    [][]float64 `json:"asks"`
-	Bids    [][]float64 `json:"bids"`
-	Result  string      `json:"result"`
-	Message string      `json:"message"`
+	Asks    [][]interface{} `json:"asks"`
+	Bids    [][]interface{} `json:"bids"`
+	Result  string          `json:"result"`
+	Message string          `json:"message"`
 }
 
 type MyAccount struct {
