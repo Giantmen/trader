@@ -11,7 +11,6 @@ import (
 
 	"github.com/Giantmen/trader/proto"
 	"github.com/Giantmen/trader/util"
-	//"github.com/Giantmen/trader/log"
 )
 
 const (
@@ -44,7 +43,6 @@ func (bter *Bter) GetTicker(currencyPair string) (float64, error) {
 // GetPriceOfDepth get the price of x depth
 func (bter *Bter) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
 	url := fmt.Sprintf("%s%s%s", BASE_URL, DEPTH_API, currencyPair)
-	//println("url:", url)
 	rep, err := util.Request("GET", url, "application/json", nil, nil, bter.timeout)
 	if err != nil {
 		return nil, fmt.Errorf("%s request err %s %v", proto.Bter, currencyPair, err)
