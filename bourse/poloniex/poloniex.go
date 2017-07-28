@@ -119,7 +119,7 @@ func (p *Poloniex) placeOrder(side, amount, price, currencyPair string) (*proto.
 		return nil, err
 	}
 	return &proto.Order{
-		OrderID:      fmt.Sprintf("%d", tresp.OrderNumber),
+		OrderID:      tresp.OrderNumber,
 		OrderTime:    time.Now().Format(proto.LocalTime),
 		Price:        float64(0),
 		Amount:       float64(0),
@@ -158,8 +158,8 @@ func (p *Poloniex) GetOneOrder(orderId, currencyPair string) (*proto.Order, erro
 	if strings.Contains(string(resp), "error") {
 		return nil, fmt.Errorf("request GetOneOrder err %s", string(resp))
 	}
-	myOrder := []MyOrder{}
-	err = json.Unmarshal(resp, myOrder)
+	myOrder := make([]MyOrder, 0)
+	err = json.Unmarshal(resp, &myOrder)
 	if err != nil {
 		return nil, err
 	}
