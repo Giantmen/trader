@@ -11,17 +11,7 @@ import (
 
 const (
 	MARKET_URL = "http://api.btc38.com/v1/"
-	//TICKER_API = "ticker?currency=%s"
-	DEPTH_API = "depth.php?c=%s&mk_type=cny"
-
-	// TRADE_URL                 = "https://trade.btc38.com/api/"
-	// GET_ACCOUNT_API           = "getAccountInfo"
-	// GET_ORDER_API             = "getOrder"
-	// GET_UNFINISHED_ORDERS_API = "getUnfinishedOrdersIgnoreTradeType"
-	// CANCEL_ORDER_API          = "cancelOrder"
-	// PLACE_ORDER_API           = "order"
-	// WITHDRAW_API              = "withdraw"
-	// CANCELWITHDRAW_API        = "cancelWithdraw"
+	DEPTH_API  = "depth.php?c=%s&mk_type=cny"
 )
 
 type Btc38 struct {

@@ -3,22 +3,29 @@ package poloniex
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Giantmen/trader/proto"
 	"github.com/Giantmen/trader/util"
 )
 
-var (
-	API_URL          = "https://poloniex.com/public?"
-	TICKER_URL       = "tickers/%s.json"
-	DEPTH_URL        = "command=returnOrderBook&currencyPair=%s&depth=%d"
-	USER_INFO_URL    = "members/me.json"
-	GET_ORDER_API    = "order.json"
-	DELETE_ORDER_API = "order/delete.json"
-	PLACE_ORDER_API  = "orders.json"
+const (
+	PUBLICAPI = "https://poloniex.com/public"
+	TRADEAPI  = "https://poloniex.com/tradingApi"
+)
+
+const (
+	BUY              = "buy"
+	SELL             = "sell"
+	ORDERBOOK        = "returnOrderBook"
+	ORDERTRADES      = "returnOrderTrades"
+	OPENORDERS       = "returnOpenOrders"
+	CANCLEORDER      = "cancelOrder"
+	COMPLETEBALANCES = "returnAvailableAccountBalances"
 )
 
 type Poloniex struct {
@@ -35,13 +42,14 @@ func NewPoloniex(accessKey, secretKey string, timeout int) (*Poloniex, error) {
 	}, nil
 }
 
-func (poloniex *Poloniex) GetTicker(currencyPair string) (float64, error) {
-	return 0, nil
+func (p *Poloniex) GetTicker(currencyPair string) (float64, error) {
+	return 0.0, nil
 }
 
-func (poloniex *Poloniex) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
-	url := API_URL + fmt.Sprintf(DEPTH_URL, strings.ToUpper(currencyPair), size)
-	rep, err := util.Request("GET", url, "application/json", nil, nil, 4)
+// 获取满足某个深度的价格
+func (p *Poloniex) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
+	url := fmt.Sprintf("%s?command=%s&currencyPair=%s&depth=%d", PUBLICAPI, ORDERBOOK, strings.ToUpper(currencyPair), size)
+	rep, err := util.Request("GET", url, "", nil, nil, p.timeout)
 	if err != nil {
 		return nil, fmt.Errorf("%s request err %s %v", proto.Poloniex, currencyPair, err)
 	}
@@ -50,75 +58,248 @@ func (poloniex *Poloniex) GetPriceOfDepth(size int, depth float64, currencyPair 
 		return nil, fmt.Errorf("%s json Unmarshal err %s %v", proto.Poloniex, currencyPair, err)
 	}
 
-	var sellsum float64
-	var buysum float64
-	var sellprice float64
-	var buyprice float64
-	var len int = len(body.Asks)
-	for i := 0; i < len; i++ {
-		price, err := strconv.ParseFloat((body.Asks[i][0]).(string), 64)
+	asks, _ := body.Asks.([]interface{})
+	bids, _ := body.Bids.([]interface{})
+	buyPrice, err := priceOfDepth(asks, depth)
+	if err != nil {
+		return nil, err
+	}
+	sellPrice, err := priceOfDepth(bids, depth)
+	if err != nil {
+		return nil, err
+	}
+	return &proto.Price{
+		Buy:  buyPrice,
+		Sell: sellPrice,
+	}, nil
+}
+
+func priceOfDepth(terms []interface{}, depth float64) (float64, error) {
+	var d float64 = 0.0
+	for _, term := range terms {
+		entry, _ := term.([]interface{})
+		p := entry[0].(string)
+		c := entry[1].(float64)
+		pf, err := strconv.ParseFloat(p, 64)
 		if err != nil {
-			continue
+			return 0.0, err
 		}
-		sum := price * ((body.Asks[i][1]).(float64))
-		sellsum += sum
-		if sellsum > float64(depth) {
-			sellprice = price
-			break
-		}
-	}
-
-	for i := 0; i < len; i++ {
-		price, err := strconv.ParseFloat((body.Bids[i][0]).(string), 64)
-		if err != nil {
-			continue
-		}
-		sum := price * ((body.Bids[i][1]).(float64))
-		buysum += sum
-		if buysum > float64(depth) {
-			buyprice = price
-			break
+		total := pf * c
+		d += total
+		if d > float64(depth) {
+			return pf, nil
 		}
 	}
+	return 0.0, fmt.Errorf("has no enough depth sum:%v depth:%v", d, depth)
+}
 
-	if sellsum > float64(depth) && buysum > float64(depth) {
-		price := proto.Price{
-			Sell: sellprice,
-			Buy:  buyprice,
-		}
-		return &price, nil
+func (p *Poloniex) placeOrder(side, amount, price, currencyPair string) (*proto.Order, error) {
+	v := url.Values{}
+	v.Set("command", side)
+	v.Set("currencyPair", strings.ToUpper(currencyPair))
+	v.Set("rate", price)
+	v.Set("amount", amount)
+
+	sign, err := p.buildPostForm(&v)
+	if err != nil {
+		return nil, err
 	}
-	return nil, fmt.Errorf("sum not enough sell:%v buy:%v depth:%v", sellsum, buysum, depth)
+	header := http.Header{}
+	header.Set("Key", p.accessKey)
+	header.Set("Sign", sign)
+
+	body := strings.NewReader(v.Encode())
+	resp, err := util.Request("post", TRADEAPI, "application/x-www-form-urlencoded", body, header, p.timeout)
+	if err != nil {
+		return nil, fmt.Errorf("request %v err:%v", side, err)
+	}
+	tresp := new(PlaceOrder)
+	err = json.Unmarshal(resp, &tresp)
+	if err != nil {
+		return nil, err
+	}
+	return &proto.Order{
+		OrderID:      fmt.Sprintf("%d", tresp.OrderNumber),
+		OrderTime:    time.Now().Format(proto.LocalTime),
+		Price:        float64(0),
+		Amount:       float64(0),
+		DealedAmount: float64(0),
+		Fee:          float64(0),
+		Status:       proto.ORDER_UNFINISH,
+		Currency:     currencyPair,
+		Side:         side,
+	}, nil
 }
 
-func (poloniex *Poloniex) GetAccount() (*proto.Account, error) {
-	return nil, nil
+func (p *Poloniex) Buy(amount, price, currencyPair string) (*proto.Order, error) {
+	return p.placeOrder(proto.BUY, amount, price, currencyPair)
 }
 
-func (poloniex *Poloniex) placeOrder(side int, amount, price, currencyPair string) (*proto.Order, error) {
-	return nil, nil
+func (p *Poloniex) Sell(amount, price, currencyPair string) (*proto.Order, error) {
+	return p.placeOrder(proto.SELL, amount, price, currencyPair)
 }
 
-func (poloniex *Poloniex) Buy(amount, price, currencyPair string) (*proto.Order, error) {
-	return poloniex.placeOrder(proto.BUY_N, amount, price, currencyPair)
+func (p *Poloniex) GetOneOrder(orderId, currencyPair string) (*proto.Order, error) {
+	v := url.Values{}
+	v.Set("command", ORDERTRADES)
+	v.Set("orderNumber", orderId)
+	sign, _ := p.buildPostForm(&v)
+
+	header := http.Header{}
+	header.Set("Key", p.accessKey)
+	header.Set("Sign", sign)
+
+	body := strings.NewReader(v.Encode())
+	resp, err := util.Request("post", TRADEAPI, "application/x-www-form-urlencoded", body, header, p.timeout)
+	if err != nil {
+		return nil, err
+	}
+
+	if strings.Contains(string(resp), "error") {
+		return nil, fmt.Errorf("request GetOneOrder err %s", string(resp))
+	}
+	myOrder := []MyOrder{}
+	err = json.Unmarshal(resp, myOrder)
+	if err != nil {
+		return nil, err
+	}
+
+	order := new(proto.Order)
+	order.OrderID = orderId
+	order.Currency = currencyPair
+	if len(myOrder) > 0 {
+		order.OrderTime = myOrder[0].Date
+	}
+	var amounts float64
+	for _, myorder := range myOrder {
+		amount, _ := strconv.ParseFloat(myorder.Total, 64)
+		amounts += amount
+	}
+	order.DealedAmount = amounts
+	return order, nil
 }
 
-func (poloniex *Poloniex) Sell(amount, price, currencyPair string) (*proto.Order, error) {
-	return poloniex.placeOrder(proto.SELL_N, amount, price, currencyPair)
+func (p *Poloniex) GetUnfinishOrders(currencyPair string) ([]OpenOrder, error) {
+	v := url.Values{}
+	v.Set("command", OPENORDERS)
+	v.Set("currencyPair", currencyPair)
+	sign, err := p.buildPostForm(&v)
+	if err != nil {
+		return nil, err
+	}
+
+	header := http.Header{}
+	header.Set("Key", p.accessKey)
+	header.Set("Sign", sign)
+
+	body := strings.NewReader(v.Encode())
+	resp, err := util.Request("post", TRADEAPI, "application/x-www-form-urlencoded", body, header, p.timeout)
+	if err != nil {
+		return nil, err
+	}
+
+	oos := make([]OpenOrder, 1)
+	err = json.Unmarshal(resp, oos)
+	if err != nil {
+		return nil, err
+	}
+	return oos, nil
 }
 
-func (poloniex *Poloniex) CancelOrder(orderId, currencyPair string) (bool, error) {
-	return false, nil
+func (p *Poloniex) CancelOrder(orderId, currencypair string) (bool, error) {
+	v := url.Values{}
+	v.Set("command", CANCLEORDER)
+	v.Set("orderNumber", orderId)
+	sign, err := p.buildPostForm(&v)
+	if err != nil {
+		return false, err
+	}
+
+	header := http.Header{}
+	header.Set("Key", p.accessKey)
+	header.Set("Sign", sign)
+
+	body := strings.NewReader(v.Encode())
+	resp, err := util.Request("post", TRADEAPI, "application/x-www-form-urlencoded", body, header, p.timeout)
+	if err != nil {
+		return false, err
+	}
+
+	result := make(map[string]interface{})
+	err = json.Unmarshal(resp, &result)
+	if err != nil || result["error"] != nil {
+		return false, err
+	}
+
+	success := int(result["success"].(float64))
+	if success != 1 {
+		return false, nil
+	}
+	return true, nil
 }
 
-func (poloniex *Poloniex) parseOrder(myorder *MyOrder) (*proto.Order, error) {
-	return nil, nil
+func (p *Poloniex) GetAccount() (*proto.Account, error) {
+	v := url.Values{}
+	v.Set("command", COMPLETEBALANCES)
+	sign, err := p.buildPostForm(&v)
+	if err != nil {
+		return nil, err
+	}
+
+	header := http.Header{}
+	header.Set("Key", p.accessKey)
+	header.Set("Sign", sign)
+
+	body := strings.NewReader(v.Encode())
+	resp, err := util.Request("post", TRADEAPI, "application/x-www-form-urlencoded", body, header, p.timeout)
+	if err != nil {
+		return nil, err
+	}
+	myaccount := MyAccount{}
+	err = json.Unmarshal(resp, &myaccount)
+	if err != nil {
+		return nil, fmt.Errorf("json Unmarshal err %v", err)
+	}
+
+	account := proto.Account{}
+	account.Asset = 0
+	account.Bourse = strings.ToLower(proto.Poloniex)
+	account.SubAccounts = make(map[string]proto.SubAccount)
+
+	//btc
+	subAcc := proto.SubAccount{}
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Exchange.BTC, 64)
+	subAcc.Forzen = 0
+	subAcc.Currency = proto.BTC
+	account.SubAccounts[subAcc.Currency] = subAcc
+	//etc
+	subAcc = proto.SubAccount{}
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Exchange.ETC, 64)
+	subAcc.Forzen = 0
+	subAcc.Currency = proto.ETC
+	account.SubAccounts[subAcc.Currency] = subAcc
+	//eth
+	subAcc = proto.SubAccount{}
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Exchange.ETH, 64)
+	subAcc.Forzen = 0
+	subAcc.Currency = proto.ETH
+	account.SubAccounts[subAcc.Currency] = subAcc
+	//ltc
+	subAcc = proto.SubAccount{}
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Exchange.LTC, 64)
+	subAcc.Forzen = 0
+	subAcc.Currency = proto.LTC
+	account.SubAccounts[subAcc.Currency] = subAcc
+
+	return &account, nil
 }
 
-func (poloniex *Poloniex) GetOneOrder(orderId, currencyPair string) (*proto.Order, error) {
-	return nil, nil
-}
-
-func (poloniex *Poloniex) buildPostForm(postForm *url.Values) error {
-	return nil
+func (p *Poloniex) buildPostForm(v *url.Values) (string, error) {
+	v.Set("nonce", fmt.Sprintf("%d", time.Now().UnixNano()))
+	payload := v.Encode()
+	sign, err := util.SHA512Sign(p.secretKey, payload)
+	if err != nil {
+		return "", err
+	}
+	return sign, nil
 }
