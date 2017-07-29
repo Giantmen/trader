@@ -209,14 +209,14 @@ func (p *Poloniex) getUnfinishOrders(orderId, currencyPair string) (*proto.Order
 	}
 	for _, order := range openOrder {
 		if order.OrderNumber == orderId {
-			DealedAmount, _ := strconv.ParseFloat(order.Total, 64)
+			Amount, _ := strconv.ParseFloat(order.Total, 64)
 			return &proto.Order{
-				OrderID:      orderId,
-				Side:         order.Type,
-				DealedAmount: DealedAmount,
-				Currency:     currencyPair,
-				OrderTime:    time.Now().Format(proto.LocalTime),
-				Status:       proto.ORDER_UNFINISH,
+				OrderID:   orderId,
+				Side:      order.Type,
+				Amount:    Amount,
+				Currency:  currencyPair,
+				OrderTime: time.Now().Format(proto.LocalTime),
+				Status:    proto.ORDER_UNFINISH,
 			}, nil
 		}
 	}
