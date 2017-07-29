@@ -118,8 +118,11 @@ func (p *Poloniex) placeOrder(side, amount, price, currencyPair string) (*proto.
 	if err != nil {
 		return nil, err
 	}
+	if tresp.Error != "" {
+		return nil, fmt.Errorf("%s err:%s", side, tresp.Error)
+	}
 	return &proto.Order{
-		OrderID:      fmt.Sprintf("%d", tresp.OrderNumber),
+		OrderID:      tresp.OrderNumber,
 		OrderTime:    time.Now().Format(proto.LocalTime),
 		Price:        float64(0),
 		Amount:       float64(0),
@@ -144,7 +147,6 @@ func (p *Poloniex) GetOneOrder(orderId, currencyPair string) (*proto.Order, erro
 	v.Set("command", ORDERTRADES)
 	v.Set("orderNumber", orderId)
 	sign, _ := p.buildPostForm(&v)
-
 	header := http.Header{}
 	header.Set("Key", p.accessKey)
 	header.Set("Sign", sign)
@@ -155,23 +157,26 @@ func (p *Poloniex) GetOneOrder(orderId, currencyPair string) (*proto.Order, erro
 		return nil, err
 	}
 
-	if strings.Contains(string(resp), "error") {
-		return nil, fmt.Errorf("request GetOneOrder err %s", string(resp))
-	}
-	myOrder := []MyOrder{}
-	err = json.Unmarshal(resp, myOrder)
+	myOrder := MyOrder{}
+	err = json.Unmarshal(resp, &myOrder)
 	if err != nil {
 		return nil, err
+	}
+	if myOrder.Error != "" {
+		return p.getUnfinishOrders(orderId, currencyPair)
+	}
+	if len(myOrder.Orders) == 0 {
+		return nil, fmt.Errorf("request GetOneOrder err %s", string(resp))
 	}
 
 	order := new(proto.Order)
 	order.OrderID = orderId
 	order.Currency = currencyPair
-	if len(myOrder) > 0 {
-		order.OrderTime = myOrder[0].Date
+	if len(myOrder.Orders) > 0 {
+		order.OrderTime = myOrder.Orders[0].Date
 	}
 	var amounts float64
-	for _, myorder := range myOrder {
+	for _, myorder := range myOrder.Orders {
 		amount, _ := strconv.ParseFloat(myorder.Total, 64)
 		amounts += amount
 	}
@@ -179,15 +184,14 @@ func (p *Poloniex) GetOneOrder(orderId, currencyPair string) (*proto.Order, erro
 	return order, nil
 }
 
-func (p *Poloniex) GetUnfinishOrders(currencyPair string) ([]OpenOrder, error) {
+func (p *Poloniex) getUnfinishOrders(orderId, currencyPair string) (*proto.Order, error) {
 	v := url.Values{}
 	v.Set("command", OPENORDERS)
-	v.Set("currencyPair", currencyPair)
+	v.Set("currencyPair", strings.ToUpper(currencyPair))
 	sign, err := p.buildPostForm(&v)
 	if err != nil {
 		return nil, err
 	}
-
 	header := http.Header{}
 	header.Set("Key", p.accessKey)
 	header.Set("Sign", sign)
@@ -198,12 +202,25 @@ func (p *Poloniex) GetUnfinishOrders(currencyPair string) ([]OpenOrder, error) {
 		return nil, err
 	}
 
-	oos := make([]OpenOrder, 1)
-	err = json.Unmarshal(resp, oos)
+	openOrder := make([]OpenOrder, 1)
+	err = json.Unmarshal(resp, &openOrder)
 	if err != nil {
 		return nil, err
 	}
-	return oos, nil
+	for _, order := range openOrder {
+		if order.OrderNumber == orderId {
+			DealedAmount, _ := strconv.ParseFloat(order.Total, 64)
+			return &proto.Order{
+				OrderID:      orderId,
+				Side:         order.Type,
+				DealedAmount: DealedAmount,
+				Currency:     currencyPair,
+				OrderTime:    time.Now().Format(proto.LocalTime),
+				Status:       proto.ORDER_UNFINISH,
+			}, nil
+		}
+	}
+	return nil, fmt.Errorf("can not find orderid:%s", orderId)
 }
 
 func (p *Poloniex) CancelOrder(orderId, currencypair string) (bool, error) {

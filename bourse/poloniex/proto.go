@@ -8,7 +8,8 @@ type Depth struct {
 // 下单的返回值
 
 type PlaceOrder struct {
-	OrderNumber int64 `json:"orderNumber"`
+	OrderNumber string `json:"orderNumber"`
+	Error       string `json:"error"`
 	// ResultingTrades []struct {
 	// 	Amount  string `json:"amount"`
 	// 	Date    string `json:"date"`
@@ -30,6 +31,11 @@ type MyAccount struct {
 }
 
 type MyOrder struct {
+	Orders []Order `json:"myOrders"`
+	Error  string  `json:"error"`
+}
+
+type Order struct {
 	Amount        string `json:"amount"`
 	CurrencyPair  string `json:"currencyPair"`
 	Date          string `json:"date"`
