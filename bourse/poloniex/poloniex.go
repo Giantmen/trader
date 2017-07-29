@@ -57,40 +57,45 @@ func (p *Poloniex) GetPriceOfDepth(size int, depth float64, currencyPair string)
 	if err := json.Unmarshal(rep, &body); err != nil {
 		return nil, fmt.Errorf("%s json Unmarshal err %s %v", proto.Poloniex, currencyPair, err)
 	}
+	if body.Error != "" {
+		return nil, fmt.Errorf("err: %s", body.Error)
+	}
 
 	asks, _ := body.Asks.([]interface{})
 	bids, _ := body.Bids.([]interface{})
-	buyPrice, err := priceOfDepth(asks, depth)
+	buyPrice, buySum, err := priceOfDepth(asks, depth)
 	if err != nil {
 		return nil, err
 	}
-	sellPrice, err := priceOfDepth(bids, depth)
+	sellPrice, sellSum, err := priceOfDepth(bids, depth)
 	if err != nil {
 		return nil, err
 	}
 	return &proto.Price{
-		Buy:  buyPrice,
-		Sell: sellPrice,
+		Buy:     buyPrice,
+		Sell:    sellPrice,
+		Sellnum: sellSum,
+		Buynum:  buySum,
 	}, nil
 }
 
-func priceOfDepth(terms []interface{}, depth float64) (float64, error) {
-	var d float64 = 0.0
+func priceOfDepth(terms []interface{}, depth float64) (float64, float64, error) {
+	var sum float64 = 0.0
 	for _, term := range terms {
 		entry, _ := term.([]interface{})
 		p := entry[0].(string)
 		c := entry[1].(float64)
-		pf, err := strconv.ParseFloat(p, 64)
+		price, err := strconv.ParseFloat(p, 64)
 		if err != nil {
-			return 0.0, err
+			return 0.0, 0.0, err
 		}
-		total := pf * c
-		d += total
-		if d > float64(depth) {
-			return pf, nil
+		total := price * c
+		sum += total
+		if sum > float64(depth) {
+			return price, sum, nil
 		}
 	}
-	return 0.0, fmt.Errorf("has no enough depth sum:%v depth:%v", d, depth)
+	return 0.0, 0.0, fmt.Errorf("has no enough depth sum:%v depth:%v", sum, depth)
 }
 
 func (p *Poloniex) placeOrder(side, amount, price, currencyPair string) (*proto.Order, error) {

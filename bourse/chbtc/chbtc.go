@@ -92,8 +92,10 @@ func (chbtc *Chbtc) GetPriceOfDepth(size int, depth float64, currencyPair string
 	}
 	if sellsum > float64(depth) && buysum > float64(depth) {
 		return &proto.Price{
-			Sell: sellprice,
-			Buy:  buyprice,
+			Sell:    sellprice,
+			Buy:     buyprice,
+			Sellnum: sellsum,
+			Buynum:  buysum,
 		}, nil
 	}
 	return nil, fmt.Errorf("sum not enough %v %v", sellsum, depth)

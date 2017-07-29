@@ -1,8 +1,9 @@
 package poloniex
 
 type Depth struct {
-	Asks interface{}
-	Bids interface{}
+	Asks  interface{}
+	Bids  interface{}
+	Error string
 }
 
 // 下单的返回值

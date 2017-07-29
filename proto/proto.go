@@ -8,14 +8,16 @@ type DepthQuery struct {
 }
 
 type Price struct {
-	Buy  float64 `json:"buy,string"`
-	Sell float64 `json:"sell,string"`
+	Buy     float64 `json:"buy,string"`
+	Sell    float64 `json:"sell,string"`
+	Buynum  float64 `json:"buynum,string"`
+	Sellnum float64 `json:"sellnum,string"`
 }
 
 type Account struct {
-	Bourse      string
-	Asset       float64
-	SubAccounts map[string]SubAccount
+	Bourse      string                `validate:"required" json:"bourse"`
+	Asset       float64               `validate:"required" json:"asset"`
+	SubAccounts map[string]SubAccount `json:"subAccounts"`
 }
 
 type SubAccount struct {
@@ -55,10 +57,4 @@ type Order struct {
 type AccountQuery struct {
 	Bourse string `validate:"required" json:"bourse"`
 	//Accounts []string `validate:"required" json:"accounts"`
-}
-
-type AccountReply struct {
-	Bourse   string                `validate:"required" json:"bourse"`
-	Asset    float64               `validate:"required" json:"asset"`
-	Accounts map[string]SubAccount `json:"accounts"`
 }

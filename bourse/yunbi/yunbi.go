@@ -101,8 +101,10 @@ func (yunbi *Yunbi) GetPriceOfDepth(size int, depth float64, currencyPair string
 
 	if sellsum > float64(depth) && buysum > float64(depth) {
 		price := proto.Price{
-			Sell: sellprice,
-			Buy:  buyprice,
+			Sell:    sellprice,
+			Buy:     buyprice,
+			Sellnum: sellsum,
+			Buynum:  buysum,
 		}
 		return &price, nil
 	}
