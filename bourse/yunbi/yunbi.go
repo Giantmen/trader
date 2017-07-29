@@ -176,11 +176,15 @@ func (yunbi *Yunbi) CancelOrder(orderId, currencyPair string) (bool, error) {
 	rep, err := util.Request("POST", API_URL+API_URI_PREFIX+DELETE_ORDER_API,
 		"application/x-www-form-urlencoded", strings.NewReader(params.Encode()),
 		nil, yunbi.timeout)
-	if err != nil {
+	if err != nil || rep == nil {
 		return false, fmt.Errorf("request CancelOrder err %s", err)
 	}
-	if rep == nil {
-		return false, err
+	myorder := MyOrder{}
+	if err := json.Unmarshal(rep, &myorder); err != nil {
+		return false, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
+	}
+	if myorder.Error.Message != "" {
+		return false, fmt.Errorf("request CancelOrder err %v", myorder.Error.Message)
 	}
 	return true, nil
 }
@@ -226,6 +230,9 @@ func (yunbi *Yunbi) GetOneOrder(orderId, currencyPair string) (*proto.Order, err
 	myorder := MyOrder{}
 	if err := json.Unmarshal(rep, &myorder); err != nil {
 		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
+	}
+	if myorder.Error.Message != "" {
+		return nil, fmt.Errorf("request GetOneOrder err %v", myorder.Error.Message)
 	}
 	return yunbi.parseOrder(&myorder)
 }

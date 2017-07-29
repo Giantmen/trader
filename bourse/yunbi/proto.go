@@ -34,6 +34,10 @@ type MyAccount struct {
 }
 
 type MyOrder struct {
+	Error struct {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+	} `json:"error"`
 	AvgPrice        string `json:"avg_price"`
 	CreatedAt       string `json:"created_at"`
 	ExecutedVolume  string `json:"executed_volume"`
