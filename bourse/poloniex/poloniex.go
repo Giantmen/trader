@@ -203,7 +203,7 @@ func (p *Poloniex) getUnfinishOrders(orderId, currencyPair string) (*proto.Order
 	}
 
 	openOrder := make([]OpenOrder, 1)
-	err = json.Unmarshal(resp, openOrder)
+	err = json.Unmarshal(resp, &openOrder)
 	if err != nil {
 		return nil, err
 	}
