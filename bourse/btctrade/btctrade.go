@@ -315,13 +315,13 @@ func (b *Btctrade) convertCurrencyPair(currencyPair string) string {
 func (b *Btctrade) convertFee(currencyPair string) float64 {
 	switch currencyPair {
 	case proto.BTC_CNY:
-		return proto.FEE_Btctrade_btc
+		return proto.ConvertFee(fmt.Sprintf("%s_%s", proto.Btctrade, proto.BTC))
 	case proto.ETH_CNY:
-		return proto.FEE_Btctrade_eth
+		return proto.ConvertFee(fmt.Sprintf("%s_%s", proto.Btctrade, proto.ETH))
 	case proto.ETC_CNY:
-		return proto.FEE_Btctrade_etc
+		return proto.ConvertFee(fmt.Sprintf("%s_%s", proto.Btctrade, proto.ETC))
 	case proto.LTC_CNY:
-		return proto.FEE_Btctrade_ltc
+		return proto.ConvertFee(fmt.Sprintf("%s_%s", proto.Btctrade, proto.LTC))
 	}
 	return 0
 }

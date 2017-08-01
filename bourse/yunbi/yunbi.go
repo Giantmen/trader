@@ -157,6 +157,9 @@ func (yunbi *Yunbi) placeOrder(side, amount, price, currencyPair string) (*proto
 	if err := json.Unmarshal(rep, &myorder); err != nil {
 		return nil, fmt.Errorf("json Unmarshal err %v %s", err, string(rep))
 	}
+	if myorder.Error.Message != "" {
+		return nil, fmt.Errorf("%s err %v", side, myorder.Error.Message)
+	}
 	return yunbi.parseOrder(&myorder)
 }
 

@@ -1,5 +1,7 @@
 package proto
 
+import "strings"
+
 const (
 	Poloniex = "Poloniex"
 	Btctrade = "Btctrade"
@@ -15,24 +17,22 @@ const (
 	UTCTime   = "2006-01-02T15:04:05"
 )
 
-//手续费
-const (
-	FEE_Huobi_btc = 0.002
-	FEE_Huobi_ltc
-	FEE_Chbtc_btc
-	FEE_Chbtc_ltc
-
-	FEE_Chbtc_etc = 0.0005
-	FEE_Huobi_etc //7月13日12:00-7月16日12:00 0.01%
-	FEE_Yunbi_btc
-	FEE_Btctrade_eth
-
-	FEE_Yunbi_etc = 0.001
-	FEE_Btctrade_etc
-
-	FEE_Btctrade_btc = 0.0018
-	FEE_Btctrade_ltc
-)
+func ConvertFee(brouse string) float64 {
+	switch strings.ToLower(brouse) {
+	case "huobi_btc", "huobi_ltc", "chbtc_btc", "chbtc_ltc":
+		return 0.002
+	case "yunbi_btc", "btctrade_eth":
+		return 0.0005
+	case "chbtc_etc", "chbtc_eth":
+		return 0.00046
+	case "bter_snt":
+		return 0.0016
+	case "yunbi_etc", "yunbi_eth", "yunbi_snt", "btctrade_etc", "huobi_etc", "huobi_eth":
+		return 0.001
+	default:
+		return 0
+	}
+}
 
 const (
 	BTC_CNY = "btc_cny"
