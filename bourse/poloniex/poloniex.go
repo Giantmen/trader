@@ -280,11 +280,15 @@ func (p *Poloniex) GetAccount() (*proto.Account, error) {
 		return nil, err
 	}
 	myaccount := MyAccount{}
+	if resp == nil || string(resp) == "[]" {
+		goto ACCOUNT
+	}
 	err = json.Unmarshal(resp, &myaccount)
 	if err != nil {
 		return nil, fmt.Errorf("json Unmarshal err %v", err)
 	}
 
+ACCOUNT:
 	account := proto.Account{}
 	account.Asset = 0
 	account.Bourse = strings.ToLower(proto.Poloniex)
