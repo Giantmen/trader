@@ -29,42 +29,55 @@ type Depth struct {
 }
 
 type MyAccount struct {
-	Data interface{}
-	// Data struct {
-	// 	ID   int `json:"id"`
-	// 	List []struct {
-	// 		Balance  string `json:"balance"`
-	// 		Currency string `json:"currency"`
-	// 		Type     string `json:"type"`
-	// 	} `json:"list"`
-	// 	State string `json:"state"`
-	// 	Type  string `json:"type"`
-	// 	//User_id int    `json:"user-id"`
-	// } `json:"data"`
+	Data struct {
+		//ID   int `json:"id"`
+		List []struct {
+			Balance  string `json:"balance"`
+			Currency string `json:"currency"`
+			Type     string `json:"type"`
+		} `json:"list"`
+		State string `json:"state"`
+		Type  string `json:"type"`
+	} `json:"data"`
 	Status   string `json:"status"`
 	Err_code string `json:"err-code"`
 	Err_msg  string `json:"err-msg"`
 }
 
-//Response
-type OrderResponse struct {
-	Data   int    `json:"data"`
-	Status string `json:"status"`
+type StatusOrder struct {
+	Data     interface{} `json:"data"`
+	Err_code string      `json:"err-code"`
+	Err_msg  string      `json:"err-msg"`
+	Status   string      `json:"status"`
 }
 
 type CreateOrder struct {
-	Account_id string `json:"account-id"`
-	Amount     string `json:"amount"`
-	Price      string `json:"price"`
-	Source     string `json:"source"`
-	Symbol     string `json:"symbol"`
-	Type       string `json:"type"`
+	AccountId string `json:"account-id"`
+	Amount    string `json:"amount"`
+	Price     string `json:"price"`
+	Source    string `json:"source"`
+	Symbol    string `json:"symbol"`
+	Type      string `json:"type"`
 }
 
-type Order struct {
-	AccessKeyID      string `json:"AccessKeyId"`
-	SignatureMethod  string `json:"SignatureMethod"`
-	SignatureVersion int    `json:"SignatureVersion"`
-	Timestamp        string `json:"Timestamp"`
-	Order_id         string `json:"order-id"`
+type MyOrder struct {
+	Data struct {
+		Amount            string `json:"amount"`
+		Created_at        int64  `json:"created-at"`
+		Field_amount      string `json:"field-amount"`
+		Field_cash_amount string `json:"field-cash-amount"`
+		Field_fees        string `json:"field-fees"`
+		ID                int64  `json:"id"`
+		Price             string `json:"price"`
+		State             string `json:"state"`
+		Symbol            string `json:"symbol"`
+		Type              string `json:"type"`
+		// Account_id        int    `json:"account-id"`
+		// Canceled_at       int64    `json:"canceled-at"`
+		// Finished_at       int    `json:"finished-at"`
+		// Source            string `json:"source"`
+	} `json:"data"`
+	Status   string `json:"status"`
+	Err_code string `json:"err-code"`
+	Err_msg  string `json:"err-msg"`
 }
