@@ -39,7 +39,7 @@ func NewBter(accessKey, secretKey string, timeout int) (*Bter, error) {
 }
 
 func (bter *Bter) GetTicker(currencyPair string) (float64, error) {
-	url := fmt.Sprintf(API_URL+TICKER_URL, bter.convertCurrencyPair(currencyPair))
+	url := fmt.Sprintf(API_URL+TICKER_URL, currencyPair)
 	rep, err := util.Request("GET", url, "application/json", nil, nil, bter.timeout)
 	if err != nil {
 		return 0, fmt.Errorf("%s request err %s %v", proto.Bter, currencyPair, err)
@@ -52,7 +52,7 @@ func (bter *Bter) GetTicker(currencyPair string) (float64, error) {
 }
 
 func (bter *Bter) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
-	url := fmt.Sprintf(API_URL+DEPTH_URL, bter.convertCurrencyPair(currencyPair))
+	url := fmt.Sprintf(API_URL+DEPTH_URL, currencyPair)
 	rep, err := util.Request("GET", url, "application/x-www-form-urlencoded", nil, nil, bter.timeout)
 	if err != nil {
 		return nil, fmt.Errorf("%s request err %s %v", proto.Bter, currencyPair, err)
@@ -133,7 +133,7 @@ func (bter *Bter) GetPriceOfDepth(size int, depth float64, currencyPair string) 
 			Buynum:  buysum,
 		}, nil
 	}
-	return nil, fmt.Errorf("sum not enough %v %v", sellsum, depth)
+	return nil, fmt.Errorf("%s sum not enough %v %v", proto.Bter, sellsum, depth)
 }
 
 func (bter *Bter) GetAccount() (*proto.Account, error) {
@@ -310,23 +310,6 @@ func (bter *Bter) CancelOrder(orderId, currencyPair string) (bool, error) {
 		return false, fmt.Errorf("CancelOrder err id:%s %s", orderId, cancel.Message)
 	}
 	return true, nil
-}
-
-func (bter *Bter) convertCurrencyPair(currencyPair string) string {
-	switch currencyPair {
-	case proto.BTC_CNY:
-		return "btc_cny"
-	case proto.ETH_CNY:
-		return "eth_cny"
-	case proto.ETC_CNY:
-		return "etc_cny"
-	case proto.LTC_CNY:
-		return "ltc_cny"
-	case proto.SNT_CNY:
-		return "snt_cny"
-	default:
-		return ""
-	}
 }
 
 func (bter *Bter) buildPostForm(postForm *url.Values) (string, error) {

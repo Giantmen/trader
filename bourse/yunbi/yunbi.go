@@ -108,7 +108,7 @@ func (yunbi *Yunbi) GetPriceOfDepth(size int, depth float64, currencyPair string
 		}
 		return &price, nil
 	}
-	return nil, fmt.Errorf("sum not enough sell:%v buy:%v depth:%v", sellsum, buysum, depth)
+	return nil, fmt.Errorf("%s sum not enough sell:%v buy:%v depth:%v", proto.Yunbi, sellsum, buysum, depth)
 }
 
 func (yunbi *Yunbi) GetAccount() (*proto.Account, error) {
@@ -292,6 +292,10 @@ func (y *Yunbi) convertCurrencyPair(currencyPair string) string {
 		return "eoscny"
 	case proto.SNT_CNY:
 		return "sntcny"
+	case proto.OMG_CNY:
+		return "omgcny"
+	case proto.PAY_CNY:
+		return "paycny"
 	default:
 		return ""
 	}
