@@ -27,44 +27,53 @@ type Depth struct {
 }
 
 type MyAccount struct {
-	Limit  float64 `json:"limit"`
 	Result struct {
 		Balance struct {
+			BCC struct {
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
+			} `json:"BCC"`
 			BTC struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"BTC"`
 			BTS struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"BTS"`
 			CNY struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"CNY"`
-			DAO struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
-			} `json:"DAO"`
+			EOS struct {
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
+			} `json:"EOS"`
 			ETC struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"ETC"`
 			ETH struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"ETH"`
 			LTC struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"LTC"`
+			QTUM struct {
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
+			} `json:"QTUM"`
 		} `json:"balance"`
 		Base struct {
 			AuthGoogleEnabled    bool   `json:"auth_google_enabled"`
@@ -73,58 +82,54 @@ type MyAccount struct {
 			Username             string `json:"username"`
 		} `json:"base"`
 		Frozen struct {
+			BCC struct {
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
+			} `json:"BCC"`
 			BTC struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"BTC"`
 			BTS struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"BTS"`
 			CNY struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"CNY"`
-			DAO struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
-			} `json:"DAO"`
+			EOS struct {
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
+			} `json:"EOS"`
 			ETC struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"ETC"`
 			ETH struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"ETH"`
 			LTC struct {
-				Amount   float64 `json:"amount"`
-				Currency string  `json:"currency"`
-				Symbol   string  `json:"symbol"`
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
 			} `json:"LTC"`
+			QTUM struct {
+				Amount   string `json:"amount"`
+				Currency string `json:"currency"`
+				Symbol   string `json:"symbol"`
+			} `json:"QTUM"`
 		} `json:"frozen"`
-		NetAssets float64 `json:"netAssets"`
-		P2p       struct {
-			InBTC  float64 `json:"inBTC"`
-			InCNY  float64 `json:"inCNY"`
-			InDAO  float64 `json:"inDAO"`
-			InETC  float64 `json:"inETC"`
-			InETH  float64 `json:"inETH"`
-			InLTC  float64 `json:"inLTC"`
-			OutBTC float64 `json:"outBTC"`
-			OutCNY float64 `json:"outCNY"`
-			OutDAO float64 `json:"outDAO"`
-			OutETC float64 `json:"outETC"`
-			OutETH float64 `json:"outETH"`
-			OutLTC float64 `json:"outLTC"`
-		} `json:"p2p"`
-		TotalAssets float64 `json:"totalAssets"`
+		NetAssets   string `json:"netAssets"`
+		TotalAssets string `json:"totalAssets"`
 	} `json:"result"`
 }
 

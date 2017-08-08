@@ -119,38 +119,38 @@ func (chbtc *Chbtc) GetAccount() (*proto.Account, error) {
 	}
 
 	account := proto.Account{}
-	account.Asset = myaccount.Result.NetAssets
+	account.Asset, _ = strconv.ParseFloat(myaccount.Result.NetAssets, 64)
 	account.Bourse = strings.ToLower(proto.Chbtc)
 	account.SubAccounts = make(map[string]proto.SubAccount)
 
 	//cny
 	subAcc := proto.SubAccount{}
-	subAcc.Available = myaccount.Result.Balance.CNY.Amount
-	subAcc.Forzen = myaccount.Result.Frozen.CNY.Amount
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Result.Balance.CNY.Amount, 64)
+	subAcc.Forzen, _ = strconv.ParseFloat(myaccount.Result.Frozen.CNY.Amount, 64)
 	subAcc.Currency = strings.ToLower(myaccount.Result.Balance.CNY.Currency)
 	account.SubAccounts[subAcc.Currency] = subAcc
 	//btc
 	subAcc = proto.SubAccount{}
-	subAcc.Available = myaccount.Result.Balance.BTC.Amount
-	subAcc.Forzen = myaccount.Result.Frozen.BTC.Amount
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Result.Balance.BTC.Amount, 64)
+	subAcc.Forzen, _ = strconv.ParseFloat(myaccount.Result.Frozen.BTC.Amount, 64)
 	subAcc.Currency = strings.ToLower(myaccount.Result.Balance.BTC.Currency)
 	account.SubAccounts[subAcc.Currency] = subAcc
 	//etc
 	subAcc = proto.SubAccount{}
-	subAcc.Available = myaccount.Result.Balance.ETC.Amount
-	subAcc.Forzen = myaccount.Result.Frozen.ETC.Amount
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Result.Balance.ETC.Amount, 64)
+	subAcc.Forzen, _ = strconv.ParseFloat(myaccount.Result.Frozen.ETC.Amount, 64)
 	subAcc.Currency = strings.ToLower(myaccount.Result.Balance.ETC.Currency)
 	account.SubAccounts[subAcc.Currency] = subAcc
 	//eth
 	subAcc = proto.SubAccount{}
-	subAcc.Available = myaccount.Result.Balance.ETH.Amount
-	subAcc.Forzen = myaccount.Result.Frozen.ETH.Amount
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Result.Balance.ETH.Amount, 64)
+	subAcc.Forzen, _ = strconv.ParseFloat(myaccount.Result.Frozen.ETH.Amount, 64)
 	subAcc.Currency = strings.ToLower(myaccount.Result.Balance.ETH.Currency)
 	account.SubAccounts[subAcc.Currency] = subAcc
 	//ltc
 	subAcc = proto.SubAccount{}
-	subAcc.Available = myaccount.Result.Balance.LTC.Amount
-	subAcc.Forzen = myaccount.Result.Frozen.LTC.Amount
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Result.Balance.LTC.Amount, 64)
+	subAcc.Forzen, _ = strconv.ParseFloat(myaccount.Result.Frozen.LTC.Amount, 64)
 	subAcc.Currency = strings.ToLower(myaccount.Result.Balance.LTC.Currency)
 	account.SubAccounts[subAcc.Currency] = subAcc
 
