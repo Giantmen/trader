@@ -20,6 +20,9 @@ type MyAccount struct {
 		SNT string `json:"SNT"`
 		ETC string `json:"ETC"`
 		ETH string `json:"ETH"`
+		BTM string `json:"BTM"`
+		OMG string `json:"OMG"`
+		PAY string `json:"PAY"`
 	} `json:"available"`
 	Locked struct {
 		BTC string `json:"BTC"`
@@ -28,6 +31,9 @@ type MyAccount struct {
 		SNT string `json:"SNT"`
 		ETC string `json:"ETC"`
 		ETH string `json:"ETH"`
+		BTM string `json:"BTM"`
+		OMG string `json:"OMG"`
+		PAY string `json:"PAY"`
 	} `json:"locked"`
 	Result string `json:"result"`
 }

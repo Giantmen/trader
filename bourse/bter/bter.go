@@ -202,6 +202,24 @@ func (bter *Bter) GetAccount() (*proto.Account, error) {
 	subAcc.Forzen, _ = strconv.ParseFloat(myaccount.Locked.SNT, 64)
 	subAcc.Currency = proto.SNT
 	account.SubAccounts[subAcc.Currency] = subAcc
+	//omg
+	subAcc = proto.SubAccount{}
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Available.OMG, 64)
+	subAcc.Forzen, _ = strconv.ParseFloat(myaccount.Locked.OMG, 64)
+	subAcc.Currency = proto.OMG
+	account.SubAccounts[subAcc.Currency] = subAcc
+	//pay
+	subAcc = proto.SubAccount{}
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Available.PAY, 64)
+	subAcc.Forzen, _ = strconv.ParseFloat(myaccount.Locked.PAY, 64)
+	subAcc.Currency = proto.PAY
+	account.SubAccounts[subAcc.Currency] = subAcc
+	//btm
+	subAcc = proto.SubAccount{}
+	subAcc.Available, _ = strconv.ParseFloat(myaccount.Available.BTM, 64)
+	subAcc.Forzen, _ = strconv.ParseFloat(myaccount.Locked.BTM, 64)
+	subAcc.Currency = proto.BTM
+	account.SubAccounts[subAcc.Currency] = subAcc
 	return &account, nil
 }
 

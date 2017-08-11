@@ -25,8 +25,8 @@ func ConvertFee(brouse string) float64 {
 		return 0.0005
 	case "chbtc_etc", "chbtc_eth":
 		return 0.00046
-	case "bter_snt", "bter_omg", "bter_pay":
-		return 0.0016
+	case "bter_snt", "bter_omg", "bter_pay", "bter_btm":
+		return 0.001
 	case "yunbi_etc", "yunbi_eth", "yunbi_snt", "yunbi_omg", "yunbi_pay",
 		"btctrade_etc", "huobi_etc", "huobi_eth":
 		return 0.001
@@ -51,6 +51,7 @@ const (
 	SNT_CNY = "snt_cny"
 	OMG_CNY = "omg_cny"
 	PAY_CNY = "pay_cny"
+	BTM_CNY = "btm_cny"
 )
 const (
 	CNY = "cny"
@@ -63,6 +64,7 @@ const (
 	SNT = "snt"
 	OMG = "omg"
 	PAY = "pay"
+	BTM = "btm"
 )
 
 const (
