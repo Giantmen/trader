@@ -61,7 +61,7 @@ func (bter *Bter) GetPriceOfDepth(size int, depth float64, currencyPair string) 
 	if err := json.Unmarshal(rep, &body); err != nil {
 		return nil, fmt.Errorf("%s json Unmarshal err %s %v", proto.Bter, currencyPair, err)
 	}
-	if body.Result != "true" {
+	if body.Result != "true" || len(body.Asks) == 0 || len(body.Bids) == 0 {
 		return nil, fmt.Errorf("resault not true %s", body.Message)
 	}
 
