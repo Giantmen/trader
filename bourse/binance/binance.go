@@ -271,10 +271,10 @@ func (binance *Binance) GetOneOrder(orderId, currencyPair string) (*proto.Order,
 	return binance.parseOrder(&myorder)
 }
 
-func Deposit(currency string, amount float64) error {
+func (binance *Binance) Deposit(currency string, amount float64) error {
 	return nil
 }
-func Withdraw(currency string, amount float64) error {
+func (binance *Binance) Withdraw(currency string, amount float64) error {
 	return nil
 }
 
