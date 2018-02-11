@@ -289,6 +289,6 @@ func (binance *Binance) buildParamsSigned(postForm *url.Values) error {
 }
 
 func convertCurrency(currency string) string {
-	return strings.Trim(currency,"_")
+	return strings.Replace(currency, "_","",-1)
 }
 

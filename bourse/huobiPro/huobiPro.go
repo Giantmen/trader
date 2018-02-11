@@ -169,11 +169,11 @@ func (hbp *HuobiPro) placeOrder(side string, amount, price string, currencyPair 
 }
 
 func (hbp *HuobiPro) Buy(amount, price string, currencyPair string) (*proto.Order, error) {
-	return hbp.placeOrder(proto.BUY, amount, price, currencyPair, "buy-limit")
+	return hbp.placeOrder(proto.BUY, amount, price, convertCurrency(currencyPair), "buy-limit")
 }
 
 func (hbp *HuobiPro) Sell(amount, price string, currencyPair string) (*proto.Order, error) {
-	return hbp.placeOrder(proto.SELL, amount, price, currencyPair, "sell-limit")
+	return hbp.placeOrder(proto.SELL, amount, price, convertCurrency(currencyPair), "sell-limit")
 }
 
 func (hbp *HuobiPro) parseOrder(ordmap map[string]interface{}) *proto.Order {
@@ -276,7 +276,7 @@ func (hbp *HuobiPro) GetTicker(currencyPair string) (float64, error) {
 
 func (hbp *HuobiPro) GetPriceOfDepth(size int, depth float64, currencyPair string) (*proto.Price, error) {
 	url := BASE_URL + "/market/depth?symbol=%s&type=step0"
-	resp, err := util.HttpGet(fmt.Sprintf(url, currencyPair), nil)
+	resp, err := util.HttpGet(fmt.Sprintf(url, convertCurrency(currencyPair)), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -347,4 +347,8 @@ func (hbp *HuobiPro) toJson(params url.Values) string {
 	}
 	jsonData, _ := json.Marshal(parammap)
 	return string(jsonData)
+}
+
+func convertCurrency(currency string) string {
+	return strings.ToLower(strings.Replace(currency, "_","",-1))
 }

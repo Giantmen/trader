@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="69af24e5-c986-4926-8f97-375f4386a7c1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/bourse/bourse.go" afterPath="$PROJECT_DIR$/bourse/bourse.go" />
-      <change beforePath="$PROJECT_DIR$/proto/const.go" afterPath="$PROJECT_DIR$/proto/const.go" />
-      <change beforePath="$PROJECT_DIR$/util/crypto.go" afterPath="$PROJECT_DIR$/util/crypto.go" />
-      <change beforePath="$PROJECT_DIR$/util/http.go" afterPath="$PROJECT_DIR$/util/http.go" />
+      <change beforePath="$PROJECT_DIR$/bourse/binance/binance.go" afterPath="$PROJECT_DIR$/bourse/binance/binance.go" />
+      <change beforePath="$PROJECT_DIR$/bourse/huobiPro/huobiPro.go" afterPath="$PROJECT_DIR$/bourse/huobiPro/huobiPro.go" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,11 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="binance.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="binance.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bourse/binance/binance.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="21" column="36" lean-forward="false" selection-start-line="21" selection-start-column="36" selection-end-line="21" selection-end-column="36" />
+            <state relative-caret-position="427">
+              <caret line="291" column="39" lean-forward="false" selection-start-line="291" selection-start-column="39" selection-end-line="291" selection-end-column="39" />
               <folding>
                 <element signature="e#17#186#0" expanded="true" />
               </folding>
@@ -31,8 +29,8 @@
       <file leaf-file-name="bitfinex.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bourse/bitfinex/bitfinex.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6111">
-              <caret line="302" column="0" lean-forward="false" selection-start-line="302" selection-start-column="0" selection-end-line="307" selection-end-column="1" />
+            <state relative-caret-position="448">
+              <caret line="319" column="63" lean-forward="false" selection-start-line="319" selection-start-column="31" selection-end-line="319" selection-end-column="63" />
               <folding />
             </state>
           </provider>
@@ -78,11 +76,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="huobiPro.go" pinned="false" current-in-tab="false">
+      <file leaf-file-name="huobiPro.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bourse/huobiPro/huobiPro.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6846">
-              <caret line="326" column="19" lean-forward="false" selection-start-line="326" selection-start-column="19" selection-end-line="326" selection-end-column="19" />
+            <state relative-caret-position="528">
+              <caret line="352" column="55" lean-forward="false" selection-start-line="352" selection-start-column="55" selection-end-line="352" selection-end-column="55" />
               <folding>
                 <element signature="e#18#189#0" expanded="true" />
               </folding>
@@ -148,6 +146,7 @@
       <find>depth</find>
       <find>parseOrder</find>
       <find>limit</find>
+      <find>currencyPair</find>
     </findStrings>
   </component>
   <component name="GOROOT" path="/usr/local/go" />
@@ -167,8 +166,8 @@
         <option value="$PROJECT_DIR$/bourse/huobiPro/proto.go" />
         <option value="$PROJECT_DIR$/util/crypto.go" />
         <option value="$PROJECT_DIR$/bourse/bitfinex/bitfinex.go" />
-        <option value="$PROJECT_DIR$/bourse/huobiPro/huobiPro.go" />
         <option value="$PROJECT_DIR$/bourse/binance/binance.go" />
+        <option value="$PROJECT_DIR$/bourse/huobiPro/huobiPro.go" />
       </list>
     </option>
   </component>
@@ -179,7 +178,7 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-25" />
+    <option name="x" value="19" />
     <option name="y" value="23" />
     <option name="width" value="1400" />
     <option name="height" value="805" />
@@ -221,6 +220,12 @@
               <item name="trader" type="b2602c69:ProjectViewProjectNode" />
               <item name="trader" type="462c0819:PsiDirectoryNode" />
               <item name="bourse" type="462c0819:PsiDirectoryNode" />
+              <item name="bitfinex" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="trader" type="b2602c69:ProjectViewProjectNode" />
+              <item name="trader" type="462c0819:PsiDirectoryNode" />
+              <item name="bourse" type="462c0819:PsiDirectoryNode" />
               <item name="huobiPro" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -245,6 +250,7 @@
     <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="SearchEverywhereHistoryKey" value="air&#9;null&#9;null" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -262,10 +268,9 @@
     <option name="remove_strategy" value="false" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-25" y="23" width="1400" height="805" extended-state="0" />
-    <editor active="true" />
+    <frame x="19" y="23" width="1400" height="805" extended-state="0" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2533137" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2533137" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -506,22 +511,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bourse/bitfinex/proto.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="651">
-          <caret line="31" column="21" lean-forward="false" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bourse/binance/proto.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="212">
-          <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="24" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/bourse/huobiPro/proto.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="483">
@@ -548,30 +537,46 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bourse/huobiPro/huobiPro.go">
+    <entry file="file://$PROJECT_DIR$/bourse/binance/proto.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6846">
-          <caret line="326" column="19" lean-forward="false" selection-start-line="326" selection-start-column="19" selection-end-line="326" selection-end-column="19" />
-          <folding>
-            <element signature="e#18#189#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="212">
+          <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="24" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bourse/bitfinex/proto.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="651">
+          <caret line="31" column="21" lean-forward="false" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bourse/bitfinex/bitfinex.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6111">
-          <caret line="302" column="0" lean-forward="false" selection-start-line="302" selection-start-column="0" selection-end-line="307" selection-end-column="1" />
+        <state relative-caret-position="448">
+          <caret line="319" column="63" lean-forward="false" selection-start-line="319" selection-start-column="31" selection-end-line="319" selection-end-column="63" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bourse/binance/binance.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="21" column="36" lean-forward="false" selection-start-line="21" selection-start-column="36" selection-end-line="21" selection-end-column="36" />
+        <state relative-caret-position="427">
+          <caret line="291" column="39" lean-forward="false" selection-start-line="291" selection-start-column="39" selection-end-line="291" selection-end-column="39" />
           <folding>
             <element signature="e#17#186#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bourse/huobiPro/huobiPro.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="352" column="55" lean-forward="false" selection-start-line="352" selection-start-column="55" selection-end-line="352" selection-end-column="55" />
+          <folding>
+            <element signature="e#18#189#0" expanded="true" />
           </folding>
         </state>
       </provider>
