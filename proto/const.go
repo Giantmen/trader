@@ -12,6 +12,9 @@ const (
 	Btc38    = "Btc38"
 	Jubi     = "Jubi"
 	Bter     = "Bter"
+	Binance = "Binance"
+	Bitfinex = "Bitfinex"
+	Huobipro = "Huobipro"
 
 	LocalTime = "2006-01-02 15:04:05"
 	UTCTime   = "2006-01-02T15:04:05"
@@ -39,19 +42,21 @@ const (
 	BTC_CNY = "btc_cny"
 	LTC_CNY = "ltc_cny"
 	ETH_CNY = "eth_cny"
-	ETH_BTC = "eth_btc"
-
 	ETC_CNY = "etc_cny"
-	ETC_BTC = "etc_btc"
 
 	BTS_CNY = "bts_cny"
-	BTS_BTC = "bts_btc"
 	EOS_CNY = "eos_cny"
 
 	SNT_CNY = "snt_cny"
 	OMG_CNY = "omg_cny"
 	PAY_CNY = "pay_cny"
 	BTM_CNY = "btm_cny"
+
+	ETH_BTC = "eth_btc"
+	LTC_BTC = "ltc_btc"
+	EOS_BTC = "eos_btc"
+	NEO_BTC = "neo_btc"
+
 )
 const (
 	CNY = "cny"
@@ -65,6 +70,7 @@ const (
 	OMG = "omg"
 	PAY = "pay"
 	BTM = "btm"
+	NEO = "neo"
 )
 
 const (
