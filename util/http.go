@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"golang.org/x/net/context/ctxhttp"
+	"fmt"
 )
 
 func Request(method string, url string, bodyType string, body io.Reader, header http.Header, timeout int) ([]byte, error) {
@@ -45,10 +46,11 @@ func Request(method string, url string, bodyType string, body io.Reader, header 
 
 	case "DELETE":
 		client := &http.Client{}
-		req, err := http.NewRequest("DELETE", url, nil)
+		req, err := http.NewRequest("DELETE", url, body)
 		if err != nil {
 			return nil, err
 		}
+		req.Header=header
 		resp, err = client.Do(req)
 		if err != nil {
 			return nil, err
@@ -61,4 +63,26 @@ func Request(method string, url string, bodyType string, body io.Reader, header 
 		return nil, err
 	}
 	return data, nil
+}
+
+func HttpGet(url string,header *http.Header) ([]byte,error) {
+	client := http.Client{}
+	req,err := http.NewRequest("GET",url,nil)
+	if err!= nil {
+		fmt.Println(err)
+	}
+	if header != nil {
+		req.Header = *header
+	}
+	//req.Header.Add("X-MBX-APIKEY","XfZyiOPMQRtVAYl8rgQPRIrpB5RAxsHPkgZvdR1lURP3qbZ7zN0claHSGW1yQdt0")
+	resp,err := client.Do(req)
+	if err !=nil {
+		return nil,err
+	}
+	b,err := ioutil.ReadAll(resp.Body)
+	if err !=nil {
+		return nil,err
+	}
+	//fmt.Println(string(b))
+	return b,nil
 }

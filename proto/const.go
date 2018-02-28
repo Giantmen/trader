@@ -13,6 +13,9 @@ const (
 	Btc38    = "Btc38"
 	Jubi     = "Jubi"
 	Bter     = "Bter"
+	Binance = "Binance"
+	Bitfinex = "Bitfinex"
+	Huobipro = "Huobipro"
 
 	LocalTime = "2006-01-02 15:04:05"
 	UTCTime   = "2006-01-02T15:04:05"
@@ -43,6 +46,10 @@ const (
 	LTC_CNY = "ltc_cny"
 	ETH_CNY = "eth_cny"
 	ETC_CNY = "etc_cny"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 53dbc403f087b5c6d26a43c9cd9963b934690dfd
 	BTS_CNY = "bts_cny"
 	EOS_CNY = "eos_cny"
 	SNT_CNY = "snt_cny"
@@ -50,6 +57,7 @@ const (
 	PAY_CNY = "pay_cny"
 	BTM_CNY = "btm_cny"
 
+<<<<<<< HEAD
 	BTC_LTC = "btc_ltc"
 	BTC_ETH = "btc_eth"
 	BTC_ETC = "btc_etc"
@@ -61,6 +69,13 @@ const (
 	BTC_PAY = "btc_pay"
 	BTC_CVC = "btc_cvc"
 	BTC_SC  = "btc_sc"
+=======
+	ETH_BTC = "eth_btc"
+	LTC_BTC = "ltc_btc"
+	EOS_BTC = "eos_btc"
+	NEO_BTC = "neo_btc"
+
+>>>>>>> 53dbc403f087b5c6d26a43c9cd9963b934690dfd
 )
 const (
 	CNY = "cny"
@@ -74,8 +89,13 @@ const (
 	SNT = "snt"
 	OMG = "omg"
 	PAY = "pay"
+<<<<<<< HEAD
 	CVC = "cvc"
 	SC  = "sc"
+=======
+	BTM = "btm"
+	NEO = "neo"
+>>>>>>> 53dbc403f087b5c6d26a43c9cd9963b934690dfd
 )
 
 const (

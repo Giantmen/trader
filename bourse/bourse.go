@@ -10,4 +10,6 @@ type Bourse interface {
 	Buy(amount, price, currencyPair string) (*proto.Order, error)
 	CancelOrder(orderId, currencyPair string) (bool, error)
 	GetOneOrder(orderId, currencyPair string) (*proto.Order, error)
+	Deposit(currency string, amount float64) error
+	Withdraw(currency string, amount float64) error
 }
